@@ -4,7 +4,7 @@
 TramStopPrx
 MPKI::getTramStop(const string &name,
                   const Ice::Current &current) {
-    for (TramStopPrx stop : tram_stops_) {
+    for (TramStopPrx stop: tram_stops_) {
         if (stop->getName() == name) {
             return stop;
         }
@@ -15,10 +15,17 @@ MPKI::getTramStop(const string &name,
 void
 MPKI::registerDepo(const DepoPrx &depo,
                    const Ice::Current &current) {
+    for (DepoInfo info: depos_) {
+        if (info.name == depo->getName()) {
+            cout << "Depo already registered." << endl;
+            return;
+        }
+    }
     DepoInfo depo_info;
     depo_info.name = depo->getName();
     depo_info.stop = depo;
     depos_.push_back(depo_info);
+    cout << "Depo registered: " << depo_info.name << endl;
 }
 
 void
@@ -31,12 +38,13 @@ MPKI::unregisterDepo(const DepoPrx &depo,
     if (it != depos_.end()) {
         depos_.erase(it, depos_.end());
     }
+    cout << "Depo unregistered." << endl;
 }
 
 DepoPrx
 MPKI::getDepo(const string &name,
               const Ice::Current &current) {
-    for (DepoInfo depo_info : depos_) {
+    for (DepoInfo depo_info: depos_) {
         if (depo_info.name == name) {
             return depo_info.stop;
         }
@@ -52,6 +60,17 @@ MPKI::getDepos(const Ice::Current &current) {
 LineList
 MPKI::getLines(const Ice::Current &current) {
     return lines_;
+}
+
+LinePrx
+MPKI::getLine(const string &name,
+               const Ice::Current &current) {
+    for (LinePrx line: lines_) {
+        if (line->getName() == name) {
+            return line;
+        }
+    }
+    return nullptr;
 }
 
 void
@@ -96,18 +115,28 @@ void showMenu() {
     cout << "1. Create line." << endl;
     cout << "2. Create stop." << endl;
     cout << "3. Show lines." << endl;
+    cout << "4. Register depo." << endl;
+    cout << "5. Unregister depo." << endl;
+    cout << "6. Show depos." << endl;
+    cout << "0. Exit." << endl;
 }
 
 int
 main(int argc, char *argv[]) {
     int status = 0;
+    cout << "Enter mpk configuration (mpk_name/port): ";
+    string input;
+    cin >> input;
+    string mpk_name = input.substr(0, input.find('/'));
+    string port = input.substr(input.find('/') + 1);
+    cout << "Creating mpk: " << mpk_name << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
         ic = Ice::initialize(argc, argv);
         Ice::ObjectAdapterPtr adapter =
-                ic->createObjectAdapterWithEndpoints("MpkAdapter", "default -p 12345");
+                ic->createObjectAdapterWithEndpoints("MpkAdapter", "default -p " + port);
         Ice::ObjectPtr object = new MPKI;
-        adapter->add(object, Ice::stringToIdentity("Mpk"));
+        adapter->add(object, Ice::stringToIdentity(mpk_name));
         adapter->activate();
 
         cout << "Creating MPK server..." << endl;
@@ -123,14 +152,19 @@ main(int argc, char *argv[]) {
         if (!lineFactory)
             throw "Invalid proxy";
 
-        MPKPrx mpk = Ice::uncheckedCast<MPKPrx>(adapter->createProxy(Ice::stringToIdentity("Mpk")));
+        MPKPrx mpk = Ice::uncheckedCast<MPKPrx>(adapter->createProxy(Ice::stringToIdentity(mpk_name)));
         mpk->registerLineFactory(lineFactory);
         mpk->registerStopFactory(stopFactory);
 
         while (true) {
             showMenu();
+            cout << "Enter your choice: ";
             char choice = '0';
             cin >> choice;
+            if (choice == '0') {
+                cout << "Exiting..." << endl;
+                break;
+            }
             switch (choice) {
                 case '1': {
                     string line_name;
@@ -151,10 +185,49 @@ main(int argc, char *argv[]) {
                 case '3': {
                     LineList lines = mpk->getLines();
                     cout << "\n----------------" << endl;
-                    cout << "Dostępne linie:" << endl;
+                    cout << "Available lines:" << endl;
                     cout << "----------------" << endl;
-                    for (LinePrx currLine : lines) {
+                    for (LinePrx currLine: lines) {
                         cout << "| " << currLine.get()->getName() << " |" << endl;
+                    }
+                    cout << "----------------" << endl;
+                    break;
+                }
+                case '4': {
+                    cout << "Enter depository configuration (depo_name/port): ";
+                    string input;
+                    cin >> input;
+                    string depo_name = input.substr(0, input.find('/'));
+                    string depo_port = input.substr(input.find('/') + 1);
+                    cout << "Searching for depo with name: " + depo_name + " on port " + depo_port << endl;
+                    Ice::ObjectPrx baseDepo = ic->stringToProxy(depo_name + ":default -p " + depo_port);
+                    DepoPrx depo = DepoPrx::checkedCast(baseDepo);
+                    if (!depo)
+                        throw "Invalid proxy";
+                    mpk->registerDepo(depo);
+                    break;
+                }
+                case '5': {
+                    cout << "Enter depository configuration (depo_name/port): ";
+                    string input;
+                    cin >> input;
+                    string depo_name = input.substr(0, input.find('/'));
+                    string depo_port = input.substr(input.find('/') + 1);
+                    cout << "Searching for depo with name: " + depo_name + " on port " + depo_port << endl;
+                    Ice::ObjectPrx baseDepo = ic->stringToProxy(depo_name + ":default -p " + depo_port);
+                    DepoPrx depo = DepoPrx::checkedCast(baseDepo);
+                    if (!depo)
+                        throw "Invalid proxy";
+                    mpk->unregisterDepo(depo);
+                    break;
+                }
+                case '6': {
+                    DepoList depos = mpk->getDepos();
+                    cout << "\n----------------" << endl;
+                    cout << "Available depositories:" << endl;
+                    cout << "----------------" << endl;
+                    for (DepoInfo currDepo: depos) {
+                        cout << "| " << currDepo.name << " |" << endl;
                     }
                     cout << "----------------" << endl;
                     break;
@@ -173,6 +246,7 @@ main(int argc, char *argv[]) {
         status = 1;
     }
     if (ic)
-        ic->destroy();
+        ic->shutdown();
+    ic->destroy();
     return status;
 }

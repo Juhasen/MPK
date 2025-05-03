@@ -61,16 +61,19 @@ TramI::getStockNumber(const Ice::Current& current)
 int
 main (int argc, char* argv[]) {
     int status = 0;
+    cout << "Enter tram configuration (tram_stock_number/port): ";
+    string input;
+    cin >> input;
+    string tram_stock_number = input.substr(0, input.find('/'));
+    string port = input.substr(input.find('/') + 1);
+    cout << "Creating tram: " << tram_stock_number << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
         ic = Ice::initialize(argc, argv);
         Ice::ObjectAdapterPtr adapter =
-                ic->createObjectAdapterWithEndpoints("TramAdapter", "default -p 12347");
-        cout << "Enter tram stock number: ";
-        string stock_number;
-        cin >> stock_number;
-        Ice::ObjectPtr object = new TramI(stock_number);
-        adapter->add(object, Ice::stringToIdentity("Tram"));
+                ic->createObjectAdapterWithEndpoints("TramAdapter", "default -p "+port);
+        Ice::ObjectPtr object = new TramI(tram_stock_number);
+        adapter->add(object, Ice::stringToIdentity(tram_stock_number));
         adapter->activate();
 
         cout << "Tram object created." << endl;
@@ -84,6 +87,7 @@ main (int argc, char* argv[]) {
     }
     if (ic) {
         try {
+            ic->shutdown();
             ic->destroy();
         } catch (const Ice::Exception& e) {
             cerr << e << endl;

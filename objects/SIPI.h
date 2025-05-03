@@ -104,6 +104,9 @@ public:
 
     virtual LineList getLines(const Ice::Current &) override;
 
+    virtual LinePrx getLine(const string &name,
+                              const Ice::Current &) override;
+
     virtual void registerLineFactory(const LineFactoryPrx &line_factory_prx,
                                      const Ice::Current &) override;
 
@@ -146,6 +149,8 @@ public:
                              const Ice::Current &) override;
 
     virtual string getName(const Ice::Current &) override;
+
+    virtual void showRegisteredTrams(const Ice::Current &) override;
 
 private:
     string name_;

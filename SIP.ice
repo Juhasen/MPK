@@ -81,6 +81,7 @@ module SIP {
     Depo* getDepo(string name);
     DepoList getDepos();
     LineList getLines();
+    Line* getLine(string name);
     void addLine(Line* l);
     void addStop(Stop* st);
     void registerLineFactory(LineFactory* lf);
@@ -93,6 +94,7 @@ module SIP {
   interface Depo {
       void TramOnline(Tram* t);
       void TramOffline(Tram* t);
+      void showRegisteredTrams();
       string getName();
   };
 
