@@ -2,7 +2,7 @@
 all: slice line_factory stop_factory mpk
 
 slice:
-	slice2cpp --impl-c++11 SIP.ice
+	slice2cpp SIP.ice
 
 mpk: objects/Mpk.cpp
 	g++ -I. objects/Mpk.cpp SIP.cpp -lIce -lpthread -o mpk
@@ -20,4 +20,4 @@ stop_factory: objects/StopFactory.cpp objects/Stop.cpp
 #	g++ -I. src/System.cpp SIP.cpp -lIce -lpthread -o mpk
 
 clean:
-	-rm SIPI.cpp SIPI.h line_factory stop_factory mpk
+	-rm SIP.cpp SIP.h line_factory stop_factory mpk
