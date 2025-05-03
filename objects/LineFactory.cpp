@@ -12,7 +12,6 @@ LineFactoryI::createLine(const string &name, const Ice::Current &current) {
     } catch (const Ice::AlreadyRegisteredException &) {
         throw LineExists{};
     }
-    return nullptr;
 }
 
 double

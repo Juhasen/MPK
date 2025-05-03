@@ -551,6 +551,16 @@ public:
     bool _iceD_getLines(::IceInternal::Incoming&, const ::Ice::Current&);
     /// \endcond
 
+    virtual void addLine(::std::shared_ptr<LinePrx> l, const ::Ice::Current& current) = 0;
+    /// \cond INTERNAL
+    bool _iceD_addLine(::IceInternal::Incoming&, const ::Ice::Current&);
+    /// \endcond
+
+    virtual void addStop(::std::shared_ptr<StopPrx> st, const ::Ice::Current& current) = 0;
+    /// \cond INTERNAL
+    bool _iceD_addStop(::IceInternal::Incoming&, const ::Ice::Current&);
+    /// \endcond
+
     virtual void registerLineFactory(::std::shared_ptr<LineFactoryPrx> lf, const ::Ice::Current& current) = 0;
     /// \cond INTERNAL
     bool _iceD_registerLineFactory(::IceInternal::Incoming&, const ::Ice::Current&);
@@ -1423,6 +1433,58 @@ public:
 
     /// \cond INTERNAL
     void _iceI_getLines(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::SIP::LineList>>&, const ::Ice::Context&);
+    /// \endcond
+
+    void addLine(const ::std::shared_ptr<LinePrx>& l, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        _makePromiseOutgoing<void>(true, this, &MPKPrx::_iceI_addLine, l, context).get();
+    }
+
+    template<template<typename> class P = ::std::promise>
+    auto addLineAsync(const ::std::shared_ptr<LinePrx>& l, const ::Ice::Context& context = ::Ice::noExplicitContext)
+        -> decltype(::std::declval<P<void>>().get_future())
+    {
+        return _makePromiseOutgoing<void, P>(false, this, &MPKPrx::_iceI_addLine, l, context);
+    }
+
+    ::std::function<void()>
+    addLineAsync(const ::std::shared_ptr<LinePrx>& l,
+                 ::std::function<void()> response,
+                 ::std::function<void(::std::exception_ptr)> ex = nullptr,
+                 ::std::function<void(bool)> sent = nullptr,
+                 const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        return _makeLamdaOutgoing<void>(std::move(response), std::move(ex), std::move(sent), this, &SIP::MPKPrx::_iceI_addLine, l, context);
+    }
+
+    /// \cond INTERNAL
+    void _iceI_addLine(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>&, const ::std::shared_ptr<LinePrx>&, const ::Ice::Context&);
+    /// \endcond
+
+    void addStop(const ::std::shared_ptr<StopPrx>& st, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        _makePromiseOutgoing<void>(true, this, &MPKPrx::_iceI_addStop, st, context).get();
+    }
+
+    template<template<typename> class P = ::std::promise>
+    auto addStopAsync(const ::std::shared_ptr<StopPrx>& st, const ::Ice::Context& context = ::Ice::noExplicitContext)
+        -> decltype(::std::declval<P<void>>().get_future())
+    {
+        return _makePromiseOutgoing<void, P>(false, this, &MPKPrx::_iceI_addStop, st, context);
+    }
+
+    ::std::function<void()>
+    addStopAsync(const ::std::shared_ptr<StopPrx>& st,
+                 ::std::function<void()> response,
+                 ::std::function<void(::std::exception_ptr)> ex = nullptr,
+                 ::std::function<void(bool)> sent = nullptr,
+                 const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        return _makeLamdaOutgoing<void>(std::move(response), std::move(ex), std::move(sent), this, &SIP::MPKPrx::_iceI_addStop, st, context);
+    }
+
+    /// \cond INTERNAL
+    void _iceI_addStop(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>&, const ::std::shared_ptr<StopPrx>&, const ::Ice::Context&);
     /// \endcond
 
     void registerLineFactory(const ::std::shared_ptr<LineFactoryPrx>& lf, const ::Ice::Context& context = ::Ice::noExplicitContext)
@@ -2547,6 +2609,22 @@ typedef ::IceUtil::Handle< Callback_MPK_getLines_Base> Callback_MPK_getLinesPtr;
 
 /**
  * Base class for asynchronous callback wrapper classes used for calls to
+ * IceProxy::SIP::MPK::begin_addLine.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addLine.
+ */
+class Callback_MPK_addLine_Base : public virtual ::IceInternal::CallbackBase { };
+typedef ::IceUtil::Handle< Callback_MPK_addLine_Base> Callback_MPK_addLinePtr;
+
+/**
+ * Base class for asynchronous callback wrapper classes used for calls to
+ * IceProxy::SIP::MPK::begin_addStop.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addStop.
+ */
+class Callback_MPK_addStop_Base : public virtual ::IceInternal::CallbackBase { };
+typedef ::IceUtil::Handle< Callback_MPK_addStop_Base> Callback_MPK_addStopPtr;
+
+/**
+ * Base class for asynchronous callback wrapper classes used for calls to
  * IceProxy::SIP::MPK::begin_registerLineFactory.
  * Create a wrapper instance by calling ::SIP::newCallback_MPK_registerLineFactory.
  */
@@ -3603,6 +3681,82 @@ public:
 private:
 
     ::Ice::AsyncResultPtr _iceI_begin_getLines(const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
+
+public:
+
+    void addLine(const ::SIP::LinePrx& l, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        end_addLine(_iceI_begin_addLine(l, context, ::IceInternal::dummyCallback, 0, true));
+    }
+
+    ::Ice::AsyncResultPtr begin_addLine(const ::SIP::LinePrx& l, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        return _iceI_begin_addLine(l, context, ::IceInternal::dummyCallback, 0);
+    }
+
+    ::Ice::AsyncResultPtr begin_addLine(const ::SIP::LinePrx& l, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addLine(l, ::Ice::noExplicitContext, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addLine(const ::SIP::LinePrx& l, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addLine(l, context, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addLine(const ::SIP::LinePrx& l, const ::SIP::Callback_MPK_addLinePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addLine(l, ::Ice::noExplicitContext, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addLine(const ::SIP::LinePrx& l, const ::Ice::Context& context, const ::SIP::Callback_MPK_addLinePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addLine(l, context, cb, cookie);
+    }
+
+    void end_addLine(const ::Ice::AsyncResultPtr& result);
+
+private:
+
+    ::Ice::AsyncResultPtr _iceI_begin_addLine(const ::SIP::LinePrx&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
+
+public:
+
+    void addStop(const ::SIP::StopPrx& st, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        end_addStop(_iceI_begin_addStop(st, context, ::IceInternal::dummyCallback, 0, true));
+    }
+
+    ::Ice::AsyncResultPtr begin_addStop(const ::SIP::StopPrx& st, const ::Ice::Context& context = ::Ice::noExplicitContext)
+    {
+        return _iceI_begin_addStop(st, context, ::IceInternal::dummyCallback, 0);
+    }
+
+    ::Ice::AsyncResultPtr begin_addStop(const ::SIP::StopPrx& st, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addStop(st, ::Ice::noExplicitContext, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addStop(const ::SIP::StopPrx& st, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addStop(st, context, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addStop(const ::SIP::StopPrx& st, const ::SIP::Callback_MPK_addStopPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addStop(st, ::Ice::noExplicitContext, cb, cookie);
+    }
+
+    ::Ice::AsyncResultPtr begin_addStop(const ::SIP::StopPrx& st, const ::Ice::Context& context, const ::SIP::Callback_MPK_addStopPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
+    {
+        return _iceI_begin_addStop(st, context, cb, cookie);
+    }
+
+    void end_addStop(const ::Ice::AsyncResultPtr& result);
+
+private:
+
+    ::Ice::AsyncResultPtr _iceI_begin_addStop(const ::SIP::StopPrx&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
 
 public:
 
@@ -4771,6 +4925,16 @@ public:
     virtual LineList getLines(const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
     /// \cond INTERNAL
     bool _iceD_getLines(::IceInternal::Incoming&, const ::Ice::Current&);
+    /// \endcond
+
+    virtual void addLine(const LinePrx& l, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
+    /// \cond INTERNAL
+    bool _iceD_addLine(::IceInternal::Incoming&, const ::Ice::Current&);
+    /// \endcond
+
+    virtual void addStop(const StopPrx& st, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
+    /// \cond INTERNAL
+    bool _iceD_addStop(::IceInternal::Incoming&, const ::Ice::Current&);
     /// \endcond
 
     virtual void registerLineFactory(const LineFactoryPrx& lf, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
@@ -8588,6 +8752,318 @@ template<class T, typename CT> Callback_MPK_getLinesPtr
 newCallback_MPK_getLines(T* instance, void (T::*cb)(const LineList&, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
 {
     return new Callback_MPK_getLines<T, CT>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Type-safe asynchronous callback wrapper class used for calls to
+ * IceProxy::SIP::MPK::begin_addLine.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addLine.
+ */
+template<class T>
+class CallbackNC_MPK_addLine : public Callback_MPK_addLine_Base, public ::IceInternal::OnewayCallbackNC<T>
+{
+public:
+
+    typedef IceUtil::Handle<T> TPtr;
+
+    typedef void (T::*Exception)(const ::Ice::Exception&);
+    typedef void (T::*Sent)(bool);
+    typedef void (T::*Response)();
+
+    CallbackNC_MPK_addLine(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
+        : ::IceInternal::OnewayCallbackNC<T>(obj, cb, excb, sentcb)
+    {
+    }
+};
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(const IceUtil::Handle<T>& instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addLine<T>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addLine<T>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(T* instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addLine<T>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(T* instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addLine<T>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Type-safe asynchronous callback wrapper class with cookie support used for calls to
+ * IceProxy::SIP::MPK::begin_addLine.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addLine.
+ */
+template<class T, typename CT>
+class Callback_MPK_addLine : public Callback_MPK_addLine_Base, public ::IceInternal::OnewayCallback<T, CT>
+{
+public:
+
+    typedef IceUtil::Handle<T> TPtr;
+
+    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
+    typedef void (T::*Sent)(bool , const CT&);
+    typedef void (T::*Response)(const CT&);
+
+    Callback_MPK_addLine(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
+        : ::IceInternal::OnewayCallback<T, CT>(obj, cb, excb, sentcb)
+    {
+    }
+};
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T, typename CT> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(const IceUtil::Handle<T>& instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addLine<T, CT>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T, typename CT> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addLine<T, CT>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T, typename CT> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(T* instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addLine<T, CT>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addLine.
+ */
+template<class T, typename CT> Callback_MPK_addLinePtr
+newCallback_MPK_addLine(T* instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addLine<T, CT>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Type-safe asynchronous callback wrapper class used for calls to
+ * IceProxy::SIP::MPK::begin_addStop.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addStop.
+ */
+template<class T>
+class CallbackNC_MPK_addStop : public Callback_MPK_addStop_Base, public ::IceInternal::OnewayCallbackNC<T>
+{
+public:
+
+    typedef IceUtil::Handle<T> TPtr;
+
+    typedef void (T::*Exception)(const ::Ice::Exception&);
+    typedef void (T::*Sent)(bool);
+    typedef void (T::*Response)();
+
+    CallbackNC_MPK_addStop(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
+        : ::IceInternal::OnewayCallbackNC<T>(obj, cb, excb, sentcb)
+    {
+    }
+};
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(const IceUtil::Handle<T>& instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addStop<T>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addStop<T>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(T* instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addStop<T>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(T* instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
+{
+    return new CallbackNC_MPK_addStop<T>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Type-safe asynchronous callback wrapper class with cookie support used for calls to
+ * IceProxy::SIP::MPK::begin_addStop.
+ * Create a wrapper instance by calling ::SIP::newCallback_MPK_addStop.
+ */
+template<class T, typename CT>
+class Callback_MPK_addStop : public Callback_MPK_addStop_Base, public ::IceInternal::OnewayCallback<T, CT>
+{
+public:
+
+    typedef IceUtil::Handle<T> TPtr;
+
+    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
+    typedef void (T::*Sent)(bool , const CT&);
+    typedef void (T::*Response)(const CT&);
+
+    Callback_MPK_addStop(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
+        : ::IceInternal::OnewayCallback<T, CT>(obj, cb, excb, sentcb)
+    {
+    }
+};
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T, typename CT> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(const IceUtil::Handle<T>& instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addStop<T, CT>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T, typename CT> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addStop<T, CT>(instance, 0, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param cb The success method of the callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T, typename CT> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(T* instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addStop<T, CT>(instance, cb, excb, sentcb);
+}
+
+/**
+ * Creates a callback wrapper instance that delegates to your object.
+ * Use this overload when your callback methods receive a cookie value.
+ * @param instance The callback object.
+ * @param excb The exception method of the callback object.
+ * @param sentcb The sent method of the callback object.
+ * @return An object that can be passed to an asynchronous invocation of IceProxy::SIP::MPK::begin_addStop.
+ */
+template<class T, typename CT> Callback_MPK_addStopPtr
+newCallback_MPK_addStop(T* instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
+{
+    return new Callback_MPK_addStop<T, CT>(instance, 0, excb, sentcb);
 }
 
 /**

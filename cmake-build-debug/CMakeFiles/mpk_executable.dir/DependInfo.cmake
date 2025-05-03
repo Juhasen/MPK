@@ -9,6 +9,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/LineFactory.cpp" "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Mpk.cpp" "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/StopFactory.cpp" "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

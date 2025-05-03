@@ -156,6 +156,8 @@ const ::std::string iceC_SIP_MPK_ids[2] =
 };
 const ::std::string iceC_SIP_MPK_ops[] =
 {
+    "addLine",
+    "addStop",
     "getDepo",
     "getDepos",
     "getLines",
@@ -177,6 +179,8 @@ const ::std::string iceC_SIP_MPK_unregisterDepo_name = "unregisterDepo";
 const ::std::string iceC_SIP_MPK_getDepo_name = "getDepo";
 const ::std::string iceC_SIP_MPK_getDepos_name = "getDepos";
 const ::std::string iceC_SIP_MPK_getLines_name = "getLines";
+const ::std::string iceC_SIP_MPK_addLine_name = "addLine";
+const ::std::string iceC_SIP_MPK_addStop_name = "addStop";
 const ::std::string iceC_SIP_MPK_registerLineFactory_name = "registerLineFactory";
 const ::std::string iceC_SIP_MPK_unregisterLineFactory_name = "unregisterLineFactory";
 const ::std::string iceC_SIP_MPK_registerStopFactory_name = "registerStopFactory";
@@ -1002,6 +1006,36 @@ SIP::MPK::_iceD_getLines(::IceInternal::Incoming& inS, const ::Ice::Current& cur
 
 /// \cond INTERNAL
 bool
+SIP::MPK::_iceD_addLine(::IceInternal::Incoming& inS, const ::Ice::Current& current)
+{
+    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
+    auto istr = inS.startReadParams();
+    ::std::shared_ptr<LinePrx> iceP_l;
+    istr->readAll(iceP_l);
+    inS.endReadParams();
+    this->addLine(::std::move(iceP_l), current);
+    inS.writeEmptyParams();
+    return true;
+}
+/// \endcond
+
+/// \cond INTERNAL
+bool
+SIP::MPK::_iceD_addStop(::IceInternal::Incoming& inS, const ::Ice::Current& current)
+{
+    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
+    auto istr = inS.startReadParams();
+    ::std::shared_ptr<StopPrx> iceP_st;
+    istr->readAll(iceP_st);
+    inS.endReadParams();
+    this->addStop(::std::move(iceP_st), current);
+    inS.writeEmptyParams();
+    return true;
+}
+/// \endcond
+
+/// \cond INTERNAL
+bool
 SIP::MPK::_iceD_registerLineFactory(::IceInternal::Incoming& inS, const ::Ice::Current& current)
 {
     _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
@@ -1064,7 +1098,7 @@ SIP::MPK::_iceD_unregisterStopFactory(::IceInternal::Incoming& inS, const ::Ice:
 bool
 SIP::MPK::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_SIP_MPK_ops, iceC_SIP_MPK_ops + 14, current.operation);
+    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_SIP_MPK_ops, iceC_SIP_MPK_ops + 16, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -1074,57 +1108,65 @@ SIP::MPK::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& curren
     {
         case 0:
         {
-            return _iceD_getDepo(in, current);
+            return _iceD_addLine(in, current);
         }
         case 1:
         {
-            return _iceD_getDepos(in, current);
+            return _iceD_addStop(in, current);
         }
         case 2:
         {
-            return _iceD_getLines(in, current);
+            return _iceD_getDepo(in, current);
         }
         case 3:
         {
-            return _iceD_getTramStop(in, current);
+            return _iceD_getDepos(in, current);
         }
         case 4:
         {
-            return _iceD_ice_id(in, current);
+            return _iceD_getLines(in, current);
         }
         case 5:
         {
-            return _iceD_ice_ids(in, current);
+            return _iceD_getTramStop(in, current);
         }
         case 6:
         {
-            return _iceD_ice_isA(in, current);
+            return _iceD_ice_id(in, current);
         }
         case 7:
         {
-            return _iceD_ice_ping(in, current);
+            return _iceD_ice_ids(in, current);
         }
         case 8:
         {
-            return _iceD_registerDepo(in, current);
+            return _iceD_ice_isA(in, current);
         }
         case 9:
         {
-            return _iceD_registerLineFactory(in, current);
+            return _iceD_ice_ping(in, current);
         }
         case 10:
         {
-            return _iceD_registerStopFactory(in, current);
+            return _iceD_registerDepo(in, current);
         }
         case 11:
         {
-            return _iceD_unregisterDepo(in, current);
+            return _iceD_registerLineFactory(in, current);
         }
         case 12:
         {
-            return _iceD_unregisterLineFactory(in, current);
+            return _iceD_registerStopFactory(in, current);
         }
         case 13:
+        {
+            return _iceD_unregisterDepo(in, current);
+        }
+        case 14:
+        {
+            return _iceD_unregisterLineFactory(in, current);
+        }
+        case 15:
         {
             return _iceD_unregisterStopFactory(in, current);
         }
@@ -1896,6 +1938,32 @@ SIP::MPKPrx::_iceI_getLines(const ::std::shared_ptr<::IceInternal::OutgoingAsync
 
 /// \cond INTERNAL
 void
+SIP::MPKPrx::_iceI_addLine(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::shared_ptr<LinePrx>& iceP_l, const ::Ice::Context& context)
+{
+    outAsync->invoke(iceC_SIP_MPK_addLine_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
+        [&](::Ice::OutputStream* ostr)
+        {
+            ostr->writeAll(iceP_l);
+        },
+        nullptr);
+}
+/// \endcond
+
+/// \cond INTERNAL
+void
+SIP::MPKPrx::_iceI_addStop(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::shared_ptr<StopPrx>& iceP_st, const ::Ice::Context& context)
+{
+    outAsync->invoke(iceC_SIP_MPK_addStop_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
+        [&](::Ice::OutputStream* ostr)
+        {
+            ostr->writeAll(iceP_st);
+        },
+        nullptr);
+}
+/// \endcond
+
+/// \cond INTERNAL
+void
 SIP::MPKPrx::_iceI_registerLineFactory(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::shared_ptr<LineFactoryPrx>& iceP_lf, const ::Ice::Context& context)
 {
     outAsync->invoke(iceC_SIP_MPK_registerLineFactory_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
@@ -2203,6 +2271,10 @@ const ::std::string iceC_SIP_MPK_getDepo_name = "getDepo";
 const ::std::string iceC_SIP_MPK_getDepos_name = "getDepos";
 
 const ::std::string iceC_SIP_MPK_getLines_name = "getLines";
+
+const ::std::string iceC_SIP_MPK_addLine_name = "addLine";
+
+const ::std::string iceC_SIP_MPK_addStop_name = "addStop";
 
 const ::std::string iceC_SIP_MPK_registerLineFactory_name = "registerLineFactory";
 
@@ -3303,6 +3375,56 @@ IceProxy::SIP::MPK::end_getLines(const ::Ice::AsyncResultPtr& result)
     istr->read(ret);
     result->_endReadParams();
     return ret;
+}
+
+::Ice::AsyncResultPtr
+IceProxy::SIP::MPK::_iceI_begin_addLine(const ::SIP::LinePrx& iceP_l, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
+{
+    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_SIP_MPK_addLine_name, del, cookie, sync);
+    try
+    {
+        result->prepare(iceC_SIP_MPK_addLine_name, ::Ice::Normal, context);
+        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
+        ostr->write(iceP_l);
+        result->endWriteParams();
+        result->invoke(iceC_SIP_MPK_addLine_name);
+    }
+    catch(const ::Ice::Exception& ex)
+    {
+        result->abort(ex);
+    }
+    return result;
+}
+
+void
+IceProxy::SIP::MPK::end_addLine(const ::Ice::AsyncResultPtr& result)
+{
+    _end(result, iceC_SIP_MPK_addLine_name);
+}
+
+::Ice::AsyncResultPtr
+IceProxy::SIP::MPK::_iceI_begin_addStop(const ::SIP::StopPrx& iceP_st, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
+{
+    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_SIP_MPK_addStop_name, del, cookie, sync);
+    try
+    {
+        result->prepare(iceC_SIP_MPK_addStop_name, ::Ice::Normal, context);
+        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
+        ostr->write(iceP_st);
+        result->endWriteParams();
+        result->invoke(iceC_SIP_MPK_addStop_name);
+    }
+    catch(const ::Ice::Exception& ex)
+    {
+        result->abort(ex);
+    }
+    return result;
+}
+
+void
+IceProxy::SIP::MPK::end_addStop(const ::Ice::AsyncResultPtr& result)
+{
+    _end(result, iceC_SIP_MPK_addStop_name);
 }
 
 ::Ice::AsyncResultPtr
@@ -4998,6 +5120,36 @@ SIP::MPK::_iceD_getLines(::IceInternal::Incoming& inS, const ::Ice::Current& cur
 
 /// \cond INTERNAL
 bool
+SIP::MPK::_iceD_addLine(::IceInternal::Incoming& inS, const ::Ice::Current& current)
+{
+    _iceCheckMode(::Ice::Normal, current.mode);
+    ::Ice::InputStream* istr = inS.startReadParams();
+    LinePrx iceP_l;
+    istr->read(iceP_l);
+    inS.endReadParams();
+    this->addLine(iceP_l, current);
+    inS.writeEmptyParams();
+    return true;
+}
+/// \endcond
+
+/// \cond INTERNAL
+bool
+SIP::MPK::_iceD_addStop(::IceInternal::Incoming& inS, const ::Ice::Current& current)
+{
+    _iceCheckMode(::Ice::Normal, current.mode);
+    ::Ice::InputStream* istr = inS.startReadParams();
+    StopPrx iceP_st;
+    istr->read(iceP_st);
+    inS.endReadParams();
+    this->addStop(iceP_st, current);
+    inS.writeEmptyParams();
+    return true;
+}
+/// \endcond
+
+/// \cond INTERNAL
+bool
 SIP::MPK::_iceD_registerLineFactory(::IceInternal::Incoming& inS, const ::Ice::Current& current)
 {
     _iceCheckMode(::Ice::Normal, current.mode);
@@ -5060,6 +5212,8 @@ namespace
 {
 const ::std::string iceC_SIP_MPK_all[] =
 {
+    "addLine",
+    "addStop",
     "getDepo",
     "getDepos",
     "getLines",
@@ -5082,7 +5236,7 @@ const ::std::string iceC_SIP_MPK_all[] =
 bool
 SIP::MPK::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_SIP_MPK_all, iceC_SIP_MPK_all + 14, current.operation);
+    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_SIP_MPK_all, iceC_SIP_MPK_all + 16, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -5092,57 +5246,65 @@ SIP::MPK::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& curren
     {
         case 0:
         {
-            return _iceD_getDepo(in, current);
+            return _iceD_addLine(in, current);
         }
         case 1:
         {
-            return _iceD_getDepos(in, current);
+            return _iceD_addStop(in, current);
         }
         case 2:
         {
-            return _iceD_getLines(in, current);
+            return _iceD_getDepo(in, current);
         }
         case 3:
         {
-            return _iceD_getTramStop(in, current);
+            return _iceD_getDepos(in, current);
         }
         case 4:
         {
-            return _iceD_ice_id(in, current);
+            return _iceD_getLines(in, current);
         }
         case 5:
         {
-            return _iceD_ice_ids(in, current);
+            return _iceD_getTramStop(in, current);
         }
         case 6:
         {
-            return _iceD_ice_isA(in, current);
+            return _iceD_ice_id(in, current);
         }
         case 7:
         {
-            return _iceD_ice_ping(in, current);
+            return _iceD_ice_ids(in, current);
         }
         case 8:
         {
-            return _iceD_registerDepo(in, current);
+            return _iceD_ice_isA(in, current);
         }
         case 9:
         {
-            return _iceD_registerLineFactory(in, current);
+            return _iceD_ice_ping(in, current);
         }
         case 10:
         {
-            return _iceD_registerStopFactory(in, current);
+            return _iceD_registerDepo(in, current);
         }
         case 11:
         {
-            return _iceD_unregisterDepo(in, current);
+            return _iceD_registerLineFactory(in, current);
         }
         case 12:
         {
-            return _iceD_unregisterLineFactory(in, current);
+            return _iceD_registerStopFactory(in, current);
         }
         case 13:
+        {
+            return _iceD_unregisterDepo(in, current);
+        }
+        case 14:
+        {
+            return _iceD_unregisterLineFactory(in, current);
+        }
+        case 15:
         {
             return _iceD_unregisterStopFactory(in, current);
         }

@@ -83,17 +83,49 @@ CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/LineFactory.cpp" -o CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.s
 
+CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o: CMakeFiles/mpk_executable.dir/flags.make
+CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o: /mnt/c/Users/Krystian/Documents/Studia/SEM\ VI/RSO/mpk/objects/Mpk.cpp
+CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o: CMakeFiles/mpk_executable.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o -MF CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o.d -o CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o -c "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Mpk.cpp"
+
+CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Mpk.cpp" > CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.i
+
+CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Mpk.cpp" -o CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.s
+
+CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o: CMakeFiles/mpk_executable.dir/flags.make
+CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o: /mnt/c/Users/Krystian/Documents/Studia/SEM\ VI/RSO/mpk/objects/StopFactory.cpp
+CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o: CMakeFiles/mpk_executable.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o -MF CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o.d -o CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o -c "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/StopFactory.cpp"
+
+CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/StopFactory.cpp" > CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.i
+
+CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/StopFactory.cpp" -o CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.s
+
 # Object files for target mpk_executable
 mpk_executable_OBJECTS = \
-"CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o"
+"CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o" \
+"CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o" \
+"CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o"
 
 # External object files for target mpk_executable
 mpk_executable_EXTERNAL_OBJECTS =
 
 mpk_executable: CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o
+mpk_executable: CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o
+mpk_executable: CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o
 mpk_executable: CMakeFiles/mpk_executable.dir/build.make
 mpk_executable: CMakeFiles/mpk_executable.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable mpk_executable"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable mpk_executable"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mpk_executable.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

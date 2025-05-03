@@ -81,6 +81,8 @@ module SIP {
     Depo* getDepo(string name);
     DepoList getDepos();
     LineList getLines();
+    void addLine(Line* l);
+    void addStop(Stop* st);
     void registerLineFactory(LineFactory* lf);
     void unregisterLineFactory(LineFactory* lf);
     void registerStopFactory(StopFactory* lf);

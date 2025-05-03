@@ -1,6 +1,10 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o"
   "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o.d"
+  "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o"
+  "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o.d"
+  "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o"
+  "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o.d"
   "mpk_executable"
   "mpk_executable.pdb"
 )

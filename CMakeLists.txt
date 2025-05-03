@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Define an executable target
-add_executable(mpk_executable objects/LineFactory.cpp)
+add_executable(mpk_executable objects/LineFactory.cpp objects/Mpk.cpp objects/StopFactory.cpp)
 
 # Link the required libraries to the target
 target_link_libraries(mpk_executable PRIVATE Ice IceUtil)

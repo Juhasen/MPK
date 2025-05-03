@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o -o mpk_executable  -lIce -lIceUtil 
+/usr/bin/c++ -g CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o -o mpk_executable  -lIce -lIceUtil 

@@ -153,6 +153,54 @@ objects/LineFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.s
 .PHONY : objects/LineFactory.cpp.s
 
+objects/Mpk.o: objects/Mpk.cpp.o
+.PHONY : objects/Mpk.o
+
+# target to build an object file
+objects/Mpk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o
+.PHONY : objects/Mpk.cpp.o
+
+objects/Mpk.i: objects/Mpk.cpp.i
+.PHONY : objects/Mpk.i
+
+# target to preprocess a source file
+objects/Mpk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.i
+.PHONY : objects/Mpk.cpp.i
+
+objects/Mpk.s: objects/Mpk.cpp.s
+.PHONY : objects/Mpk.s
+
+# target to generate assembly for a file
+objects/Mpk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.s
+.PHONY : objects/Mpk.cpp.s
+
+objects/StopFactory.o: objects/StopFactory.cpp.o
+.PHONY : objects/StopFactory.o
+
+# target to build an object file
+objects/StopFactory.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o
+.PHONY : objects/StopFactory.cpp.o
+
+objects/StopFactory.i: objects/StopFactory.cpp.i
+.PHONY : objects/StopFactory.i
+
+# target to preprocess a source file
+objects/StopFactory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.i
+.PHONY : objects/StopFactory.cpp.i
+
+objects/StopFactory.s: objects/StopFactory.cpp.s
+.PHONY : objects/StopFactory.s
+
+# target to generate assembly for a file
+objects/StopFactory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.s
+.PHONY : objects/StopFactory.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -165,6 +213,12 @@ help:
 	@echo "... objects/LineFactory.o"
 	@echo "... objects/LineFactory.i"
 	@echo "... objects/LineFactory.s"
+	@echo "... objects/Mpk.o"
+	@echo "... objects/Mpk.i"
+	@echo "... objects/Mpk.s"
+	@echo "... objects/StopFactory.o"
+	@echo "... objects/StopFactory.i"
+	@echo "... objects/StopFactory.s"
 .PHONY : help
 
 
