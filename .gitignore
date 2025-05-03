@@ -3,3 +3,7 @@ SIP.h
 line_factory
 stop_factory
 mpk
+depo
+tram
+tram_stop
+passenger

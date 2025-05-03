@@ -87,6 +87,7 @@ module SIP {
     void unregisterLineFactory(LineFactory* lf);
     void registerStopFactory(StopFactory* lf);
     void unregisterStopFactory(StopFactory* lf);
+    void registerTramStop(TramStop* ts);
   };
 
   interface Depo {

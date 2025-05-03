@@ -22,6 +22,9 @@ private:
 
 class TramStopI : public virtual TramStop {
 public:
+    explicit TramStopI(const string &name) : name_(name) {
+    }
+
     virtual string getName(const Ice::Current &) override;
 
     virtual TramList getNextTrams(int,
@@ -34,6 +37,7 @@ public:
                                      const Ice::Current &) override;
 
     virtual void UpdateTramInfo(const TramPrx &tram, const Time &time, const Ice::Current &) override;
+
 private:
     string name_;
     TramList next_trams_;
@@ -112,14 +116,18 @@ public:
     virtual void unregisterStopFactory(const StopFactoryPrx &stop_factory_prx,
                                        const Ice::Current &) override;
 
-    virtual void addLine(const LinePrx& line,
-                        const Ice::Current&) override;
+    virtual void addLine(const LinePrx &line,
+                         const Ice::Current &) override;
 
-    virtual void addStop(const StopPrx& stop,
-                         const Ice::Current&) override;
+    virtual void addStop(const StopPrx &stop,
+                         const Ice::Current &) override;
+
+    virtual void registerTramStop(const TramStopPrx &tram_stop_prx,
+                                  const Ice::Current &) override;
 
 private:
     LineList lines_;
+    vector<TramStopPrx> tram_stops_;
     vector<StopPrx> stops_;
     DepoList depos_;
     LineFactoryPrx line_factory_;
@@ -128,6 +136,9 @@ private:
 
 class DepoI : public virtual Depo {
 public:
+    explicit DepoI(const string &name) : name_(name) {
+    }
+
     virtual void TramOnline(const TramPrx &tram_prx,
                             const Ice::Current &) override;
 
@@ -143,6 +154,9 @@ private:
 
 class TramI : public virtual Tram {
 public:
+    explicit TramI(const string &stock_number) : stock_number_(stock_number) {
+    }
+
     virtual TramStopPrx getLocation(const Ice::Current &) override;
 
     virtual LinePrx getLine(const Ice::Current &) override;
@@ -160,6 +174,7 @@ public:
                                      const Ice::Current &) override;
 
     virtual string getStockNumber(const Ice::Current &) override;
+
 private:
     string stock_number_;
     LinePrx line_;

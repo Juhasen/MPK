@@ -4,11 +4,12 @@
 TramStopPrx
 MPKI::getTramStop(const string &name,
                   const Ice::Current &current) {
-    for (StopPrx stop : stops_) {
+    for (TramStopPrx stop : tram_stops_) {
         if (stop->getName() == name) {
             return stop;
         }
     }
+    return nullptr;
 }
 
 void
@@ -23,11 +24,12 @@ MPKI::registerDepo(const DepoPrx &depo,
 void
 MPKI::unregisterDepo(const DepoPrx &depo,
                      const Ice::Current &current) {
-    for (const auto &depo_info : depos_) {
-        if (depo_info.stop == depo) {
-            depos_.erase(std::remove(depos_.begin(), depos_.end(), depo_info), depos_.end());
-            break;
-        }
+    auto it = std::remove_if(depos_.begin(), depos_.end(),
+                             [&depo](const DepoInfo &depo_info) {
+                                 return depo_info.stop->getName() == depo->getName();
+                             });
+    if (it != depos_.end()) {
+        depos_.erase(it, depos_.end());
     }
 }
 
@@ -82,6 +84,10 @@ void MPKI::addLine(const LinePrx &line_prx, const Ice::Current &current) {
 
 void MPKI::addStop(const StopPrx &stop_prx, const Ice::Current &current) {
     stops_.push_back(stop_prx);
+}
+
+void MPKI::registerTramStop(const TramStopPrx &tram_stop, const Ice::Current &current) {
+    tram_stops_.push_back(tram_stop);
 }
 
 

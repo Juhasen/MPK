@@ -17,14 +17,21 @@ void
 LineI::registerTram(const TramPrx& tram,
                          const Ice::Current& current)
 {
-    trams_.push_back(tram);
+    TramInfo tramInfo;
+    tramInfo.tram = tram;
+    tramInfo.time.hour = 0;
+    tramInfo.time.minute = 0;
+    trams_.push_back(tramInfo);
 }
 
 void
 LineI::unregisterTram(const TramPrx& tram,
                            const Ice::Current& current)
 {
-    auto it = std::remove(trams_.begin(), trams_.end(), tram);
+    auto it = std::remove_if(trams_.begin(), trams_.end(),
+                             [&tram](const TramInfo& tramInfo) {
+                                 return tramInfo.tram->getStockNumber() == tram->getStockNumber();
+                             });
     if (it != trams_.end()) {
         trams_.erase(it, trams_.end());
     }
