@@ -2,23 +2,21 @@
 #include "SIPI.h"
 
 StopPrx
-StopFactoryI::createStop(const string& name, const Ice::Current& current)
-{
+StopFactoryI::createStop(const string &name, const Ice::Current &current) {
     try {
         Ice::ObjectPtr servant = new StopI(name);
         current.adapter->add(servant, Ice::stringToIdentity(name));
+        cout << "Creating stop: " << name << endl;
         return Ice::uncheckedCast<StopPrx>(
             current.adapter->createProxy(Ice::stringToIdentity(name))
         );
     } catch (const Ice::AlreadyRegisteredException &) {
         throw StopExists{};
     }
-    return nullptr;
 }
 
 double
-StopFactoryI::getLoad(const Ice::Current& current)
-{
+StopFactoryI::getLoad(const Ice::Current &current) {
     return 3.23;
 }
 

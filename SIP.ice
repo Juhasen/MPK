@@ -105,6 +105,8 @@ module SIP {
     string getStockNumber();
   };
 
+  sequence <Passenger*> PassengerList;
+
   interface Passenger
   {
 	  void updateTramInfo(Tram* tram, StopList stops);

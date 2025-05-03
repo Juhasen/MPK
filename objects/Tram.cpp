@@ -1,45 +1,59 @@
 #include <Ice/Ice.h>
-#include <SIPI.h>
+#include "SIPI.h"
 
-::std::shared_ptr<::SIP::TramStopPrx>
-SIP::TramI::getLocation(const Ice::Current& current)
+TramStopPrx
+TramI::getLocation(const Ice::Current& current)
 {
-    return nullptr;
+    return location_;
 }
 
-::std::shared_ptr<::SIP::LinePrx>
-SIP::TramI::getLine(const Ice::Current& current)
+LinePrx
+TramI::getLine(const Ice::Current& current)
 {
-    return nullptr;
+    return line_;
 }
 
 void
-SIP::TramI::setLine(::std::shared_ptr<LinePrx> /*line*/,
+TramI::setLine(const LinePrx& line,
                     const Ice::Current& current)
 {
+    line_ = line;
 }
 
-::SIP::StopList
-SIP::TramI::getNextStops(int /*howMany*/,
+StopList
+TramI::getNextStops(int howMany,
                          const Ice::Current& current)
 {
-    return StopList();
+    TramStopPrx stop = getLocation(current);
+    if (howMany <= 0) {
+        return StopList();
+    }
+
+    return line_->getStops();
 }
 
 void
-SIP::TramI::RegisterPassenger(::std::shared_ptr<PassengerPrx> /*p*/,
+TramI::RegisterPassenger(const PassengerPrx& passenger,
                               const Ice::Current& current)
 {
+    passengers_.push_back(passenger);
+    cout<<"Passenger registered."<<endl;
 }
 
 void
-SIP::TramI::UnregisterPassenger(::std::shared_ptr<PassengerPrx> /*p*/,
+TramI::UnregisterPassenger(const PassengerPrx& passenger,
                                 const Ice::Current& current)
 {
+    //find and remove passenger
+    auto it = std::remove(passengers_.begin(), passengers_.end(), passenger);
+    if (it != passengers_.end()) {
+        passengers_.erase(it, passengers_.end());
+    }
+    cout<<"Passenger unregistered."<<endl;
 }
 
-::std::string
-SIP::TramI::getStockNumber(const Ice::Current& current)
+string
+TramI::getStockNumber(const Ice::Current& current)
 {
-    return ::std::string();
+    return stock_number_;
 }

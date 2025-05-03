@@ -2,6 +2,7 @@
 #define __SIPI_h__
 
 #include <memory>
+#include <chrono>
 #include <Ice/Ice.h>
 #include "../SIP.h"
 
@@ -26,13 +27,17 @@ public:
     virtual TramList getNextTrams(int,
                                   const Ice::Current &) override;
 
-    virtual void RegisterPassenger(const PassengerPrx &p,
+    virtual void RegisterPassenger(const PassengerPrx &passenger_prx,
                                    const Ice::Current &) override;
 
-    virtual void UnregisterPassenger(const PassengerPrx &p,
+    virtual void UnregisterPassenger(const PassengerPrx &passenger_prx,
                                      const Ice::Current &) override;
 
     virtual void UpdateTramInfo(const TramPrx &tram, const Time &time, const Ice::Current &) override;
+private:
+    string name_;
+    TramList next_trams_;
+    PassengerList passengers_;
 };
 
 class LineI : public virtual Line {
@@ -57,6 +62,8 @@ public:
 
 private:
     string name_;
+    StopList stops_;
+    TramList trams_;
 };
 
 class LineFactoryI : public virtual LineFactory {
@@ -131,6 +138,7 @@ public:
 
 private:
     string name_;
+    TramList online_trams_;
 };
 
 class TramI : public virtual Tram {
@@ -152,6 +160,11 @@ public:
                                      const Ice::Current &) override;
 
     virtual string getStockNumber(const Ice::Current &) override;
+private:
+    string stock_number_;
+    LinePrx line_;
+    TramStopPrx location_;
+    PassengerList passengers_;
 };
 
 class PassengerI : public virtual Passenger {

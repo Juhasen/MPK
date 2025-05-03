@@ -129,6 +129,54 @@ mpk_executable/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/build
 .PHONY : mpk_executable/fast
 
+objects/Depo.o: objects/Depo.cpp.o
+.PHONY : objects/Depo.o
+
+# target to build an object file
+objects/Depo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Depo.cpp.o
+.PHONY : objects/Depo.cpp.o
+
+objects/Depo.i: objects/Depo.cpp.i
+.PHONY : objects/Depo.i
+
+# target to preprocess a source file
+objects/Depo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Depo.cpp.i
+.PHONY : objects/Depo.cpp.i
+
+objects/Depo.s: objects/Depo.cpp.s
+.PHONY : objects/Depo.s
+
+# target to generate assembly for a file
+objects/Depo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Depo.cpp.s
+.PHONY : objects/Depo.cpp.s
+
+objects/Line.o: objects/Line.cpp.o
+.PHONY : objects/Line.o
+
+# target to build an object file
+objects/Line.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Line.cpp.o
+.PHONY : objects/Line.cpp.o
+
+objects/Line.i: objects/Line.cpp.i
+.PHONY : objects/Line.i
+
+# target to preprocess a source file
+objects/Line.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Line.cpp.i
+.PHONY : objects/Line.cpp.i
+
+objects/Line.s: objects/Line.cpp.s
+.PHONY : objects/Line.s
+
+# target to generate assembly for a file
+objects/Line.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Line.cpp.s
+.PHONY : objects/Line.cpp.s
+
 objects/LineFactory.o: objects/LineFactory.cpp.o
 .PHONY : objects/LineFactory.o
 
@@ -177,6 +225,30 @@ objects/Mpk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.s
 .PHONY : objects/Mpk.cpp.s
 
+objects/Passenger.o: objects/Passenger.cpp.o
+.PHONY : objects/Passenger.o
+
+# target to build an object file
+objects/Passenger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Passenger.cpp.o
+.PHONY : objects/Passenger.cpp.o
+
+objects/Passenger.i: objects/Passenger.cpp.i
+.PHONY : objects/Passenger.i
+
+# target to preprocess a source file
+objects/Passenger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Passenger.cpp.i
+.PHONY : objects/Passenger.cpp.i
+
+objects/Passenger.s: objects/Passenger.cpp.s
+.PHONY : objects/Passenger.s
+
+# target to generate assembly for a file
+objects/Passenger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Passenger.cpp.s
+.PHONY : objects/Passenger.cpp.s
+
 objects/StopFactory.o: objects/StopFactory.cpp.o
 .PHONY : objects/StopFactory.o
 
@@ -201,6 +273,54 @@ objects/StopFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.s
 .PHONY : objects/StopFactory.cpp.s
 
+objects/Tram.o: objects/Tram.cpp.o
+.PHONY : objects/Tram.o
+
+# target to build an object file
+objects/Tram.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Tram.cpp.o
+.PHONY : objects/Tram.cpp.o
+
+objects/Tram.i: objects/Tram.cpp.i
+.PHONY : objects/Tram.i
+
+# target to preprocess a source file
+objects/Tram.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Tram.cpp.i
+.PHONY : objects/Tram.cpp.i
+
+objects/Tram.s: objects/Tram.cpp.s
+.PHONY : objects/Tram.s
+
+# target to generate assembly for a file
+objects/Tram.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/Tram.cpp.s
+.PHONY : objects/Tram.cpp.s
+
+objects/TramStop.o: objects/TramStop.cpp.o
+.PHONY : objects/TramStop.o
+
+# target to build an object file
+objects/TramStop.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/TramStop.cpp.o
+.PHONY : objects/TramStop.cpp.o
+
+objects/TramStop.i: objects/TramStop.cpp.i
+.PHONY : objects/TramStop.i
+
+# target to preprocess a source file
+objects/TramStop.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/TramStop.cpp.i
+.PHONY : objects/TramStop.cpp.i
+
+objects/TramStop.s: objects/TramStop.cpp.s
+.PHONY : objects/TramStop.s
+
+# target to generate assembly for a file
+objects/TramStop.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/objects/TramStop.cpp.s
+.PHONY : objects/TramStop.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -210,15 +330,30 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... mpk_executable"
+	@echo "... objects/Depo.o"
+	@echo "... objects/Depo.i"
+	@echo "... objects/Depo.s"
+	@echo "... objects/Line.o"
+	@echo "... objects/Line.i"
+	@echo "... objects/Line.s"
 	@echo "... objects/LineFactory.o"
 	@echo "... objects/LineFactory.i"
 	@echo "... objects/LineFactory.s"
 	@echo "... objects/Mpk.o"
 	@echo "... objects/Mpk.i"
 	@echo "... objects/Mpk.s"
+	@echo "... objects/Passenger.o"
+	@echo "... objects/Passenger.i"
+	@echo "... objects/Passenger.s"
 	@echo "... objects/StopFactory.o"
 	@echo "... objects/StopFactory.i"
 	@echo "... objects/StopFactory.s"
+	@echo "... objects/Tram.o"
+	@echo "... objects/Tram.i"
+	@echo "... objects/Tram.s"
+	@echo "... objects/TramStop.o"
+	@echo "... objects/TramStop.i"
+	@echo "... objects/TramStop.s"
 .PHONY : help
 
 

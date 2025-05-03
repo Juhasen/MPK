@@ -6,6 +6,7 @@ LineFactoryI::createLine(const string &name, const Ice::Current &current) {
     try {
         Ice::ObjectPtr servant = new LineI(name);
         current.adapter->add(servant, Ice::stringToIdentity(name));
+        cout << "Creating line: " << name << endl;
         return Ice::uncheckedCast<LinePrx>(
             current.adapter->createProxy(Ice::stringToIdentity(name))
         );
