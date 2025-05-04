@@ -22,6 +22,7 @@ module SIP {
     int minute;
   };
 
+  //Informacja -> ten przystanek o tej godzinie
   struct StopInfo
   {
      Time time;
@@ -30,6 +31,7 @@ module SIP {
 
   sequence<StopInfo> StopList;
 
+  //
   struct TramInfo {
      Time time;
      Tram* tram;
@@ -56,6 +58,7 @@ module SIP {
   {
 		TramList getTrams();
 		StopList getStops();
+		TramStop* getStop(string name);
 		void registerTram(Tram* tram);
 		void unregisterTram(Tram* tram);
 		void setStops(StopList sl);
@@ -74,8 +77,11 @@ module SIP {
 		double getLoad();
   };
 
+  sequence<TramStop*> TramStopList;
+
   interface MPK {
     TramStop* getTramStop(string name);
+    TramStopList getTramStops();
     void registerDepo(Depo* depo);
     void unregisterDepo(Depo* depo);
     Depo* getDepo(string name);
@@ -83,6 +89,7 @@ module SIP {
     LineList getLines();
     Line* getLine(string name);
     void addLine(Line* l);
+    void setStopsForLine(Line* l, string filename);
     void addStop(Stop* st);
     void registerLineFactory(LineFactory* lf);
     void unregisterLineFactory(LineFactory* lf);
@@ -96,15 +103,19 @@ module SIP {
       void TramOffline(Tram* t);
       void showRegisteredTrams();
       string getName();
+      TramList getOnlineTrams();
+      Tram* getTram(string stockNumber);
   };
 
   interface Tram {
     TramStop* getLocation();
+    void setLocation(TramStop* ts);
     Line* getLine();
     void setLine(Line* line);
     StopList getNextStops(int howMany);
     void RegisterPassenger(Passenger* p);
     void UnregisterPassenger(Passenger* p);
+    void updatePassengerInfo(Tram* tram);
     string getStockNumber();
   };
 

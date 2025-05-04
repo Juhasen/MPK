@@ -1,0 +1,11 @@
+12:00 10050 Woronicza
+12:09 10051 Łąkowa
+12:15 10052 Nowowiejska
+12:21 10053 Plac Zbawiciela
+12:28 10054 Marszałkowska
+12:35 10055 Centrum
+12:42 10056 Dworzec Centralny
+12:49 10057 Rondo ONZ
+12:56 10058 Rondo Daszyńskiego
+13:03 10059 Wolska
+13:10 10060 Cmentarz Wolski

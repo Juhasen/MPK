@@ -47,6 +47,22 @@ DepoI::getName(const Ice::Current &current) {
     return name_;
 }
 
+TramList
+DepoI::getOnlineTrams(const Ice::Current &current) {
+    return online_trams_;
+}
+
+TramPrx
+DepoI::getTram(const string &stock_number,
+                const Ice::Current &current) {
+    for (const TramInfo &tramInfo: online_trams_) {
+        if (tramInfo.tram->getStockNumber() == stock_number) {
+            return tramInfo.tram;
+        }
+    }
+    return nullptr;
+}
+
 void showMenu() {
     cout << "\nMENU:" << endl;
     cout << "1. Add Tram." << endl;
@@ -150,19 +166,18 @@ main(int argc, char *argv[]) {
                     if (!line)
                         throw "Invalid proxy";
 
-                    cout << "Enter tram configuration (tram_stock_number/port): ";
-                    cin >> input;
-                    string tram_stock_number = input.substr(0, input.find('/'));
-                    string tram_port = input.substr(input.find('/') + 1);
-                    cout << "Searching for tram with name: " + tram_stock_number + " on port " + tram_port << endl;
-                    Ice::ObjectPrx baseTram = ic->stringToProxy(tram_stock_number + ":default -p " + tram_port);
-                    TramPrx tram = TramPrx::checkedCast(baseTram);
-                    if (!tram)
-                        throw "Invalid proxy";
-
+                    TramList trams = depo->getOnlineTrams();
+                    cout << "Available trams:" << endl;
+                    for (const TramInfo &tramInfo: trams) {
+                        cout << "| " << tramInfo.tram->getStockNumber() << " |" << endl;
+                    }
+                    cout << "Enter tram stock number: ";
+                    string tram_stock_number;
+                    cin >> tram_stock_number;
+                    TramPrx tram = depo->getTram(tram_stock_number);
                     tram->setLine(line);
+                    tram->setLocation(line->getStops()[0].stop);
                     cout << "Line set for tram." << endl;
-                    cout << tram->getLine() << endl;
                     break;
                 }
                 default: {

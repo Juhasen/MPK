@@ -12,6 +12,11 @@ MPKI::getTramStop(const string &name,
     return nullptr;
 }
 
+TramStopList
+MPKI::getTramStops(const Ice::Current &current) {
+    return tram_stops_;
+}
+
 void
 MPKI::registerDepo(const DepoPrx &depo,
                    const Ice::Current &current) {
@@ -64,7 +69,7 @@ MPKI::getLines(const Ice::Current &current) {
 
 LinePrx
 MPKI::getLine(const string &name,
-               const Ice::Current &current) {
+              const Ice::Current &current) {
     for (LinePrx line: lines_) {
         if (line->getName() == name) {
             return line;
@@ -101,6 +106,54 @@ void MPKI::addLine(const LinePrx &line_prx, const Ice::Current &current) {
     lines_.push_back(line_prx);
 }
 
+void MPKI::setStopsForLine(const LinePrx &line_prx, const string &filename, const Ice::Current &current) {
+    std::ifstream file(filename);
+    std::string txtLine;
+    StopList stops;
+
+    if (!file.is_open()) {
+        std::cerr << "Nie można otworzyć pliku!" << std::endl;
+        return;
+    }
+
+    while (std::getline(file, txtLine)) {
+        std::istringstream iss(txtLine);
+        StopInfo stop;
+        std::string time, word, name = "";
+
+        // Wczytaj godzinę
+        iss >> time;
+        stop.time.hour = stoi(time.substr(0, time.find_last_of(':')));
+        stop.time.minute = stoi(time.substr(time.find_last_of(':') + 1));
+
+        string port;
+        iss >> port;
+
+        // Reszta to nazwa przystanku (może mieć spacje)
+        while (iss >> word) {
+            if (!name.empty()) name += " ";
+            name += word;
+        }
+
+        //mamy name, znajdź TramStopPrx z name i przypisz do stop
+        string tram_stop_name = name;
+        string tram_stop_port = port;
+        cout << "Searching for tram_stop with name: " + tram_stop_name + " on port " + tram_stop_port << endl;
+        Ice::CommunicatorPtr ic = current.adapter->getCommunicator();
+        Ice::ObjectPrx baseTramStop = ic->stringToProxy(tram_stop_name + ":default -p " + tram_stop_port);
+        TramStopPrx tram_stop = TramStopPrx::checkedCast(baseTramStop);
+        if (!tram_stop)
+            throw "Invalid proxy";
+
+        stop.stop = tram_stop;
+        registerTramStop(tram_stop, current);
+        stops.push_back(stop);
+    }
+
+    file.close();
+    line_prx->setStops(stops);
+}
+
 void MPKI::addStop(const StopPrx &stop_prx, const Ice::Current &current) {
     stops_.push_back(stop_prx);
 }
@@ -118,6 +171,7 @@ void showMenu() {
     cout << "4. Register depo." << endl;
     cout << "5. Unregister depo." << endl;
     cout << "6. Show depos." << endl;
+    cout << "7. Load stops from file." << endl;
     cout << "0. Exit." << endl;
 }
 
@@ -172,6 +226,7 @@ main(int argc, char *argv[]) {
                     cin >> line_name;
                     LinePrx line = lineFactory->createLine(line_name);
                     mpk->addLine(line);
+
                     break;
                 }
                 case '2': {
@@ -230,6 +285,29 @@ main(int argc, char *argv[]) {
                         cout << "| " << currDepo.name << " |" << endl;
                     }
                     cout << "----------------" << endl;
+                    break;
+                }
+                case '7': {
+                    //List lines and find line with the same name and give its proxy
+                    LineList lines = mpk->getLines();
+                    cout << "\n----------------" << endl;
+                    cout << "Available lines:" << endl;
+                    cout << "----------------" << endl;
+                    for (LinePrx currLine: lines) {
+                        cout << "| " << currLine->getName() << " |" << endl;
+                    }
+                    cout << "----------------" << endl;
+                    cout << "Enter line name: ";
+                    string line_name;
+                    cin >> line_name;
+                    LinePrx line = mpk->getLine(line_name);
+                    if (!line)
+                        throw "Invalid proxy";
+
+                    cout << "Enter file name: ";
+                    string file_name;
+                    cin >> file_name;
+                    mpk->setStopsForLine(line, file_name);
                     break;
                 }
                 default: {

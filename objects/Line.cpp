@@ -13,6 +13,18 @@ LineI::getStops(const Ice::Current& current)
     return stops_;
 }
 
+TramStopPrx
+LineI::getStop(const string& name,
+                     const Ice::Current& current)
+{
+    for (const StopInfo& stop: stops_) {
+        if (stop.stop->getName() == name) {
+            return stop.stop;
+        }
+    }
+    return nullptr;
+}
+
 void
 LineI::registerTram(const TramPrx& tram,
                          const Ice::Current& current)

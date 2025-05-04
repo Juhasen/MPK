@@ -2,15 +2,13 @@
 #include "SIPI.h"
 
 string
-TramStopI::getName(const Ice::Current& current)
-{
+TramStopI::getName(const Ice::Current &current) {
     return name_;
 }
 
 TramList
 TramStopI::getNextTrams(int howMany,
-                             const Ice::Current& current)
-{
+                        const Ice::Current &current) {
     if (howMany <= 0) {
         return TramList();
     }
@@ -22,16 +20,14 @@ TramStopI::getNextTrams(int howMany,
 }
 
 void
-TramStopI::RegisterPassenger(const PassengerPrx& passenger,
-                                  const Ice::Current& current)
-{
+TramStopI::RegisterPassenger(const PassengerPrx &passenger,
+                             const Ice::Current &current) {
     passengers_.push_back(passenger);
 }
 
 void
-TramStopI::UnregisterPassenger(const PassengerPrx& passenger,
-                                    const Ice::Current& current)
-{
+TramStopI::UnregisterPassenger(const PassengerPrx &passenger,
+                               const Ice::Current &current) {
     auto it = std::remove(passengers_.begin(), passengers_.end(), passenger);
     if (it != passengers_.end()) {
         passengers_.erase(it, passengers_.end());
@@ -40,46 +36,48 @@ TramStopI::UnregisterPassenger(const PassengerPrx& passenger,
 }
 
 void
-TramStopI::UpdateTramInfo(const TramPrx& tram,
-                               const Time& time,
-                               const Ice::Current& current)
-{
-    StopList stop_list = tram->getNextStops(5);
+TramStopI::UpdateTramInfo(const TramPrx &tram,
+                          const Time &time,
+                          const Ice::Current &current) {
 
-    for (const auto& passenger : passengers_) {
+    StopList stop_list = tram->getNextStops(3);
+    for (const auto &passenger: passengers_) {
         passenger->updateTramInfo(tram, stop_list);
     }
-
     cout << "Tram info updated." << endl;
 }
 
 int
-main(int argc, char* argv[]) {
+main(int argc, char *argv[]) {
     int status = 0;
+    cout << "Enter tram_stop configuration (tram_stop_name/port): ";
+    string input;
+    cin >> input;
+    string tram_stop_name = input.substr(0, input.find('/'));
+    string port = input.substr(input.find('/') + 1);
+    cout << "Creating tram_stop: " << tram_stop_name << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
         ic = Ice::initialize(argc, argv);
         Ice::ObjectAdapterPtr adapter =
-                ic->createObjectAdapterWithEndpoints("TramStopAdapter", "default -p 12348");
-        cout << "Enter tram stock number: ";
-        string tram_stop_name;
-        cin >> tram_stop_name;
+                ic->createObjectAdapterWithEndpoints("TramStopAdapter", "default -p " + port);
         Ice::ObjectPtr object = new TramStopI(tram_stop_name);
-        adapter->add(object, Ice::stringToIdentity("TramStop"));
+        adapter->add(object, Ice::stringToIdentity(tram_stop_name));
         adapter->activate();
-        cout<<"TramStop object created with name:" << adapter->getName() <<endl;
+        cout << "TramStop object created." << endl;
+
         ic->waitForShutdown();
-    } catch (const Ice::Exception& e) {
+    } catch (const Ice::Exception &e) {
         cerr << e << endl;
         status = 1;
-    } catch (const char* msg) {
+    } catch (const char *msg) {
         cerr << msg << endl;
         status = 1;
     }
     if (ic) {
         try {
             ic->destroy();
-        } catch (const Ice::Exception& e) {
+        } catch (const Ice::Exception &e) {
             cerr << e << endl;
             status = 1;
         }

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <chrono>
+#include <fstream>
+#include <sstream>
 #include <Ice/Ice.h>
 #include "../SIP.h"
 
@@ -53,6 +55,9 @@ public:
 
     virtual StopList getStops(const Ice::Current &) override;
 
+    virtual TramStopPrx getStop(const string &name,
+                          const Ice::Current &) override;
+
     virtual void registerTram(const TramPrx &tram,
                               const Ice::Current &) override;
 
@@ -90,6 +95,7 @@ class MPKI : public virtual MPK {
 public:
     virtual TramStopPrx getTramStop(const string &name,
                                     const Ice::Current &) override;
+    virtual TramStopList getTramStops(const Ice::Current &current) override;
 
     virtual void registerDepo(const DepoPrx &depo,
                               const Ice::Current &) override;
@@ -122,6 +128,8 @@ public:
     virtual void addLine(const LinePrx &line,
                          const Ice::Current &) override;
 
+    virtual void setStopsForLine(const LinePrx &line_prx, const string &filename, const Ice::Current &current) override;
+
     virtual void addStop(const StopPrx &stop,
                          const Ice::Current &) override;
 
@@ -150,6 +158,11 @@ public:
 
     virtual string getName(const Ice::Current &) override;
 
+    virtual TramList getOnlineTrams(const Ice::Current &current) override;
+
+    virtual TramPrx getTram(const string &stock_number,
+                             const Ice::Current &) override;
+
     virtual void showRegisteredTrams(const Ice::Current &) override;
 
 private:
@@ -163,6 +176,8 @@ public:
     }
 
     virtual TramStopPrx getLocation(const Ice::Current &) override;
+    virtual void setLocation(const TramStopPrx &location_prx,
+                             const Ice::Current &) override;
 
     virtual LinePrx getLine(const Ice::Current &) override;
 
@@ -177,6 +192,9 @@ public:
 
     virtual void UnregisterPassenger(const PassengerPrx &passenger_prx,
                                      const Ice::Current &) override;
+
+    virtual void updatePassengerInfo(const TramPrx& tram,
+                                    const Ice::Current &) override;
 
     virtual string getStockNumber(const Ice::Current &) override;
 
