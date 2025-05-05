@@ -24,14 +24,13 @@ LineFactoryI::getLoad(const Ice::Current &current) {
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter LineFactory configuration (LineFactoryName/host/port): ";
+    cout << "Enter LineFactory configuration (LineFactoryName/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string line_factory_name = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string port = input.substr(first_slash + 1);
+    string host = getNetworkInterface();
     cout << "Creating LineFactory: " << line_factory_name << " on host " << host << " on port " << port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -39,7 +38,7 @@ main(int argc, char *argv[]) {
         Ice::ObjectAdapterPtr adapter =
                 ic->createObjectAdapterWithEndpoints("LineFactoryAdapter", "tcp -h " + host + " -p " + port);
         Ice::ObjectPtr object = new LineFactoryI;
-        adapter->add(object, Ice::stringToIdentity("LineFactory"));
+        adapter->add(object, Ice::stringToIdentity(line_factory_name));
         adapter->activate();
         cout << "Line Factory object created." << endl;
 

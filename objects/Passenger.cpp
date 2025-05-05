@@ -25,14 +25,13 @@ PassengerI::updateStopInfo(const StopPrx &stop,
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter passenger configuration (passenger_name/host/port): ";
+    cout << "Enter passenger configuration (passenger_name/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string passenger_name = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string port = input.substr(first_slash + 1);
+    string host = getNetworkInterface();
     cout << "Creating passenger: " << passenger_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -119,6 +118,7 @@ main(int argc, char *argv[]) {
                         if (!tram_stop)
                             throw "Invalid proxy";
                         tram_stop->RegisterPassenger(passenger);
+                        cout << "\nPassenger registered to TramStop." << endl;
 
                     } else {
                         cout << "Invalid type!" << endl;

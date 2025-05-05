@@ -75,14 +75,13 @@ void showMenu() {
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter depository configuration (depo_name/host/port): ";
+    cout << "Enter depository configuration (depo_name/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string depo_name = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - first_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string port = input.substr(first_slash + 1);
+    string host = getNetworkInterface();
     cout << "Creating depo: " << depo_name << " on host " + host << " on port " + port << endl;
 
     Ice::CommunicatorPtr ic;
@@ -116,8 +115,7 @@ main(int argc, char *argv[]) {
                     cin >> input;
 
                     first_slash = input.find('/');
-                    second_slash = input.find('/', first_slash + 1);
-
+                    int second_slash = input.find('/', first_slash + 1);
                     string tram_stock_number = input.substr(0, first_slash);
                     host = input.substr(first_slash + 1, second_slash - first_slash - 1);
                     string tram_port = input.substr(second_slash + 1);
@@ -135,24 +133,16 @@ main(int argc, char *argv[]) {
                     break;
                 }
                 case '2': {
-                    cout << "Enter tram configuration (tram_stock_number/host/port): ";
-                    cin >> input;
-
-                    first_slash = input.find('/');
-                    second_slash = input.find('/', first_slash + 1);
-
-                    string tram_stock_number = input.substr(0, first_slash);
-                    host = input.substr(first_slash + 1, second_slash - first_slash - 1);
-                    string tram_port = input.substr(second_slash + 1);
-
-                    cout << "Searching for tram with name: " << tram_stock_number
-                         << " on host " << host << " on port " << tram_port << endl;
-
-                    Ice::ObjectPrx baseTram = ic->stringToProxy(tram_stock_number + ":tcp -h " + host + " -p " + tram_port);
-                    TramPrx tram = TramPrx::checkedCast(baseTram);
-                    if (!tram)
-                        throw "Invalid proxy";
-
+                   //list of online trams
+                    TramList trams = depo->getOnlineTrams();
+                    cout << "Available trams:" << endl;
+                    for (const TramInfo &tramInfo: trams) {
+                        cout << "| " << tramInfo.tram->getStockNumber() << " |" << endl;
+                    }
+                    cout << "Enter tram stock number: ";
+                    string tram_stock_number;
+                    cin >> tram_stock_number;
+                    TramPrx tram = depo->getTram(tram_stock_number);
                     depo->TramOffline(tram);
                     cout << "Tram unregistered." << endl;
                     break;
@@ -166,15 +156,12 @@ main(int argc, char *argv[]) {
                     cin >> input;
 
                     first_slash = input.find('/');
-                    second_slash = input.find('/', first_slash + 1);
-
+                    int second_slash = input.find('/', first_slash + 1);
                     string mpk_name = input.substr(0, first_slash);
                     host = input.substr(first_slash + 1, second_slash - first_slash - 1);
                     string mpk_port = input.substr(second_slash + 1);
-
                     cout << "Searching for mpk with name: " << mpk_name
                          << " on host " << host << " on port " << mpk_port << endl;
-
                     Ice::ObjectPrx baseMpk = ic->stringToProxy(mpk_name + ":tcp -h " + host + " -p " + mpk_port);
                     MPKPrx mpk = MPKPrx::checkedCast(baseMpk);
                     if (!mpk)

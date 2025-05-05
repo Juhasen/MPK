@@ -43,7 +43,7 @@ main(int argc, char *argv[]) {
         Ice::ObjectAdapterPtr adapter =
                 ic->createObjectAdapterWithEndpoints("StopFactoryAdapter", "tcp -h " + host + " -p " + port);
         Ice::ObjectPtr object = new StopFactoryI;
-        adapter->add(object, Ice::stringToIdentity("StopFactory"));
+        adapter->add(object, Ice::stringToIdentity(stop_factory_name));
         adapter->activate();
         cout << "Stop Factory object created." << endl;
 

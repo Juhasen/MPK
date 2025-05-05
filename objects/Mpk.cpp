@@ -126,6 +126,9 @@ void MPKI::setStopsForLine(const LinePrx &line_prx, const string &filename, cons
         stop.time.hour = stoi(time.substr(0, time.find_last_of(':')));
         stop.time.minute = stoi(time.substr(time.find_last_of(':') + 1));
 
+        string host;
+        iss >> host;
+
         string port;
         iss >> port;
 
@@ -138,9 +141,11 @@ void MPKI::setStopsForLine(const LinePrx &line_prx, const string &filename, cons
         //mamy name, znajdź TramStopPrx z name i przypisz do stop
         string tram_stop_name = name;
         string tram_stop_port = port;
-        cout << "Searching for tram_stop with name: " + tram_stop_name + " on port " + tram_stop_port << endl;
+        string tram_stop_host = host;
+        cout << "Searching for tram_stop with name: " + tram_stop_name + " on host " + host + " port " + tram_stop_port
+                << endl;
         Ice::CommunicatorPtr ic = current.adapter->getCommunicator();
-        Ice::ObjectPrx baseTramStop = ic->stringToProxy(tram_stop_name + ":default -p " + tram_stop_port);
+        Ice::ObjectPrx baseTramStop = ic->stringToProxy(tram_stop_name + ":tcp -h " + host + " -p " + tram_stop_port);
         TramStopPrx tram_stop = TramStopPrx::checkedCast(baseTramStop);
         if (!tram_stop) {
             throw "Invalid proxy";
@@ -167,26 +172,24 @@ void MPKI::registerTramStop(const TramStopPrx &tram_stop, const Ice::Current &cu
 void showMenu() {
     cout << "\nMENU:" << endl;
     cout << "1. Create line." << endl;
-    cout << "2. Create stop." << endl;
-    cout << "3. Show lines." << endl;
-    cout << "4. Register depo." << endl;
-    cout << "5. Unregister depo." << endl;
-    cout << "6. Show depos." << endl;
-    cout << "7. Load stops from file." << endl;
+    cout << "2. Show lines." << endl;
+    cout << "3. Register depo." << endl;
+    cout << "4. Unregister depo." << endl;
+    cout << "5. Show depos." << endl;
+    cout << "6. Load stops from file." << endl;
     cout << "0. Exit." << endl;
 }
 
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter mpk configuration (mpk_name/host/port): ";
+    cout << "Enter mpk configuration (mpk_name/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string mpk_name = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string port = input.substr(first_slash + 1);
+    string host = getNetworkInterface();
     cout << "Creating mpk: " << mpk_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -199,39 +202,21 @@ main(int argc, char *argv[]) {
 
         cout << "Creating MPK server..." << endl;
 
-        //Register line and stop factories
-        // Register stop factory
-        cout << "Enter stop factory configuration (name/host/port): ";
-        string input;
-        cin >> input;
-
-        size_t first_slash = input.find('/');
-        size_t second_slash = input.find('/', first_slash + 1);
-
-        string stop_factory_name = input.substr(0, first_slash);
-        string stop_host = input.substr(first_slash + 1, second_slash - first_slash - 1);
-        string stop_port = input.substr(second_slash + 1);
-
-        cout << "Connecting to StopFactory: " << stop_factory_name << " on host " << stop_host << " port " << stop_port << endl;
-
-        Ice::ObjectPrx baseStop = ic->stringToProxy(stop_factory_name + ":tcp -h " + stop_host + " -p " + stop_port);
-        StopFactoryPrx stopFactory = StopFactoryPrx::checkedCast(baseStop);
-        if (!stopFactory) {
-            throw "Invalid proxy for StopFactory";
-        }
+        //Register line
 
         // Register line factory
         cout << "Enter line factory configuration (name/host/port): ";
         cin >> input;
 
         first_slash = input.find('/');
-        second_slash = input.find('/', first_slash + 1);
+        int second_slash = input.find('/', first_slash + 1);
 
         string line_factory_name = input.substr(0, first_slash);
         string line_host = input.substr(first_slash + 1, second_slash - first_slash - 1);
         string line_port = input.substr(second_slash + 1);
 
-        cout << "Connecting to LineFactory: " << line_factory_name << " on host " << line_host << " port " << line_port << endl;
+        cout << "Connecting to LineFactory: " << line_factory_name << " on host " << line_host << " port " << line_port
+                << endl;
 
         Ice::ObjectPrx baseLine = ic->stringToProxy(line_factory_name + ":tcp -h " + line_host + " -p " + line_port);
         LineFactoryPrx lineFactory = LineFactoryPrx::checkedCast(baseLine);
@@ -241,7 +226,6 @@ main(int argc, char *argv[]) {
 
         MPKPrx mpk = Ice::uncheckedCast<MPKPrx>(adapter->createProxy(Ice::stringToIdentity(mpk_name)));
         mpk->registerLineFactory(lineFactory);
-        mpk->registerStopFactory(stopFactory);
 
         while (true) {
             showMenu();
@@ -263,14 +247,6 @@ main(int argc, char *argv[]) {
                     break;
                 }
                 case '2': {
-                    string stop_name;
-                    cout << "Enter stop name: ";
-                    cin >> stop_name;
-                    StopPrx stop = stopFactory->createStop(stop_name);
-                    mpk->addStop(stop);
-                    break;
-                }
-                case '3': {
                     LineList lines = mpk->getLines();
                     cout << "\n----------------" << endl;
                     cout << "Available lines:" << endl;
@@ -281,19 +257,22 @@ main(int argc, char *argv[]) {
                     cout << "----------------" << endl;
                     break;
                 }
-                case '4': {
-                    cout << "Enter depository configuration (depo_name/port): ";
+                case '3': {
+                    cout << "Enter depository configuration (depo_name/host/port): ";
                     string input;
                     cin >> input;
 
-                    size_t slash = input.find('/');
-                    string depo_name = input.substr(0, slash);
-                    string depo_port = input.substr(slash + 1);
-                    string host = "localhost";
+                    size_t first_slash = input.find('/');
+                    size_t second_slash = input.find('/', first_slash + 1);
 
-                    cout << "Searching for depo with name: " << depo_name << " on host " << host << " on port " << depo_port << endl;
+                    string depo_name = input.substr(0, first_slash);
+                    string host = input.substr(first_slash + 1, second_slash - first_slash - 1);
+                    string depo_port = input.substr(second_slash + 1);
 
-                    Ice::ObjectPrx baseDepo = ic->stringToProxy(depo_name + ":default -p " + depo_port);
+                    cout << "Searching for depo with name: " << depo_name << " on host " << host << " on port " <<
+                            depo_port << endl;
+
+                    Ice::ObjectPrx baseDepo = ic->stringToProxy(depo_name + ":tcp -h " + host + " -p " + depo_port);
                     DepoPrx depo = DepoPrx::checkedCast(baseDepo);
                     if (!depo) {
                         throw "Invalid proxy";
@@ -301,27 +280,36 @@ main(int argc, char *argv[]) {
                     mpk->registerDepo(depo);
                     break;
                 }
-                case '5': {
-                    cout << "Enter depository configuration (depo_name/port): ";
-                    string input;
-                    cin >> input;
-
-                    size_t slash = input.find('/');
-                    string depo_name = input.substr(0, slash);
-                    string depo_port = input.substr(slash + 1);
-                    string host = "localhost";
-
-                    cout << "Searching for depo with name: " << depo_name << " on host " << host << " on port " << depo_port << endl;
-
-                    Ice::ObjectPrx baseDepo = ic->stringToProxy(depo_name + ":default -p " + depo_port);
-                    DepoPrx depo = DepoPrx::checkedCast(baseDepo);
-                    if (!depo) {
-                        throw "Invalid proxy";
+                case '4': {
+                    DepoList depos = mpk->getDepos();
+                    if (depos.empty()) {
+                        cout << "No registered depositories available." << endl;
+                        break;
                     }
+
+                    cout << "\n----------------" << endl;
+                    cout << "Available depositories:" << endl;
+                    cout << "----------------" << endl;
+                    for (const DepoInfo &currDepo: depos) {
+                        cout << "| " << currDepo.name << " |" << endl;
+                    }
+                    cout << "----------------" << endl;
+
+                    cout << "Enter the name of the depository to unregister: ";
+                    string depo_name;
+                    cin >> depo_name;
+
+                    DepoPrx depo = mpk->getDepo(depo_name);
+                    if (!depo) {
+                        cout << "Depo with name '" << depo_name << "' not found." << endl;
+                        break;
+                    }
+
                     mpk->unregisterDepo(depo);
+                    cout << "Depo unregistered: " << depo_name << endl;
                     break;
                 }
-                case '6': {
+                case '5': {
                     DepoList depos = mpk->getDepos();
                     cout << "\n----------------" << endl;
                     cout << "Available depositories:" << endl;
@@ -332,9 +320,13 @@ main(int argc, char *argv[]) {
                     cout << "----------------" << endl;
                     break;
                 }
-                case '7': {
+                case '6': {
                     //List lines and find line with the same name and give its proxy
                     LineList lines = mpk->getLines();
+                    if (lines.empty()) {
+                        cout << "No registered lines available." << endl;
+                        break;
+                    }
                     cout << "\n----------------" << endl;
                     cout << "Available lines:" << endl;
                     cout << "----------------" << endl;

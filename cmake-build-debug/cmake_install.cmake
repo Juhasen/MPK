@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK
+# Install script for directory: /mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

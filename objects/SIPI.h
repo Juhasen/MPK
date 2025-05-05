@@ -4,7 +4,9 @@
 #include <memory>
 #include <chrono>
 #include <fstream>
+#include <ifaddrs.h>
 #include <sstream>
+#include <arpa/inet.h>
 #include <Ice/Ice.h>
 #include "../SIP.h"
 
@@ -217,4 +219,53 @@ public:
 };
 
 
+inline std::string getNetworkInterface() {
+    ifaddrs *interfaces = nullptr, *ifa = nullptr;
+    std::vector<std::pair<std::string, std::string>> interfaceList;
+
+    if (getifaddrs(&interfaces) == -1) {
+        perror("getifaddrs");
+        return "";
+    }
+
+    // Collect and display all network interfaces with IPv4 addresses
+    std::cout << "Available network interfaces:\n";
+    int index = 1;
+    for (ifa = interfaces; ifa != nullptr; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == nullptr) continue;
+
+        if (ifa->ifa_addr->sa_family == AF_INET) { // IPv4 only
+            char addressBuffer[INET_ADDRSTRLEN];
+            void* addrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            inet_ntop(AF_INET, addrPtr, addressBuffer, INET_ADDRSTRLEN);
+
+            std::string name(ifa->ifa_name);
+            std::string ip(addressBuffer);
+            interfaceList.emplace_back(name, ip);
+
+            std::cout << index << ") " << name << " : " << ip << "\n";
+            ++index;
+        }
+    }
+
+    if (interfaceList.empty()) {
+        std::cerr << "No IPv4 interfaces found.\n";
+        freeifaddrs(interfaces);
+        return "";
+    }
+
+    int choice = 0;
+    std::cout << "\nEnter the number of the interface to select: ";
+    std::cin >> choice;
+
+    freeifaddrs(interfaces);
+
+    if (choice < 1 || choice > static_cast<int>(interfaceList.size())) {
+        std::cerr << "Invalid choice.\n";
+        return "";
+    }
+
+    const auto& [name, ip] = interfaceList[choice - 1];
+    return ip;
+}
 #endif

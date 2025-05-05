@@ -1,2 +1,2 @@
-12:00 10050 Woronicza
-12:09 10051 LakowaLuzii
+12:00 127.0.0.1 10050 Woronicza
+12:09 127.0.0.1 10051 Lakowa

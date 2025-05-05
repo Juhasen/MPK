@@ -31,7 +31,6 @@ module SIP {
 
   sequence<StopInfo> StopList;
 
-  //
   struct TramInfo {
      Time time;
      Tram* tram;

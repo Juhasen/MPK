@@ -55,7 +55,7 @@ void
 TramI::RegisterPassenger(const PassengerPrx &passenger,
                          const Ice::Current &current) {
     passengers_.push_back(passenger);
-    cout << "Passenger registered." << endl;
+    cout << "\nPassenger registered." << endl;
 }
 
 void
@@ -66,7 +66,7 @@ TramI::UnregisterPassenger(const PassengerPrx &passenger,
     if (it != passengers_.end()) {
         passengers_.erase(it, passengers_.end());
     }
-    cout << "Passenger unregistered." << endl;
+    cout << "\nPassenger unregistered." << endl;
 }
 
 void
@@ -75,7 +75,7 @@ TramI::updatePassengerInfo(const TramPrx& tram, const Ice::Current &current) {
     for (const auto &passenger: passengers_) {
         passenger->updateTramInfo(tram, stop_list);
     }
-    cout << "Tram info updated." << endl;
+    cout << "\nTram info updated." << endl;
 }
 
 string
@@ -86,14 +86,13 @@ TramI::getStockNumber(const Ice::Current &current) {
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter tram configuration (tram_stock_number/host/port): ";
+    cout << "Enter tram configuration (tram_stock_number/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string tram_stock_number = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - first_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string port = input.substr(first_slash + 1);
+    string host = getNetworkInterface();
     cout << "Creating tram: " << tram_stock_number << " on host " + host + " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -124,9 +123,17 @@ main(int argc, char *argv[]) {
             }
             switch (choice) {
                 case '1': {
+                    if (!tram->getLocation()) {
+                        cout << "Tram is not assigned to any stop." << endl;
+                        break;
+                    }
                     cout << "Current position: " << tram->getLocation()->getName() << endl;
                     cout << "Assigned stops:" << endl;
                     StopList stops = tram->getLine()->getStops();
+                    if (stops.size() == 0 || !stops.data()) {
+                        cout << "No stops found." << endl;
+                        break;
+                    }
                     for (StopInfo stop: stops) {
                         cout << "Stop: " << stop.stop->getName() << endl;
                     }

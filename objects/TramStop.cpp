@@ -50,14 +50,13 @@ TramStopI::UpdateTramInfo(const TramPrx &tram,
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter tram_stop configuration (tram_stop_name/host/port): ";
+    cout << "Enter tram_stop configuration (tram_stop_name/port): ";
     string input;
     cin >> input;
     size_t first_slash = input.find('/');
-    size_t second_slash = input.find('/', first_slash + 1);
     string tram_stop_name = input.substr(0, first_slash);
-    string host = input.substr(first_slash + 1, second_slash - 1);
-    string port = input.substr(second_slash + 1);
+    string host = getNetworkInterface();
+    string port = input.substr(first_slash + 1);
     cout << "Creating tram_stop: " << tram_stop_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
