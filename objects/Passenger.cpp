@@ -25,17 +25,20 @@ PassengerI::updateStopInfo(const StopPrx &stop,
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter passenger configuration (passenger_name/port): ";
+    cout << "Enter passenger configuration (passenger_name/host/port): ";
     string input;
     cin >> input;
-    string passenger_name = input.substr(0, input.find('/'));
-    string port = input.substr(input.find('/') + 1);
-    cout << "Creating passenger: " << passenger_name << " on port " + port << endl;
+    size_t first_slash = input.find('/');
+    size_t second_slash = input.find('/', first_slash + 1);
+    string passenger_name = input.substr(0, first_slash);
+    string host = input.substr(first_slash + 1, second_slash - 1);
+    string port = input.substr(second_slash + 1);
+    cout << "Creating passenger: " << passenger_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
         ic = Ice::initialize(argc, argv);
         Ice::ObjectAdapterPtr adapter =
-                ic->createObjectAdapterWithEndpoints("PassengerAdapter", "default -p " + port);
+                ic->createObjectAdapterWithEndpoints("PassengerAdapter", "tcp -h " + host + " -p " + port);
         Ice::ObjectPtr object = new PassengerI;
         adapter->add(object, Ice::stringToIdentity(passenger_name));
         adapter->activate();
@@ -44,12 +47,18 @@ main(int argc, char *argv[]) {
             Ice::stringToIdentity(passenger_name)));
         cout << "Passenger object created." << endl;
 
-        cout << "Enter mpk configuration (mpk_name/port): ";
+        cout << "Enter mpk configuration (mpk_name/host/port): ";
         cin >> input;
-        string mpk_name = input.substr(0, input.find('/'));
-        string mpk_port = input.substr(input.find('/') + 1);
-        cout << "Searching for mpk with name: " + mpk_name + " on port " + mpk_port << endl;
-        Ice::ObjectPrx baseMpk = ic->stringToProxy(mpk_name + ":default -p " + mpk_port);
+        size_t mpk_first_slash = input.find('/');
+        size_t mpk_second_slash = input.find('/', mpk_first_slash + 1);
+        string mpk_name = input.substr(0, mpk_first_slash);
+        string mpk_host = input.substr(mpk_first_slash + 1, mpk_second_slash - mpk_first_slash - 1);
+        string mpk_port = input.substr(mpk_second_slash + 1);
+
+        cout << "Searching for mpk with name: " << mpk_name
+             << " on host " << mpk_host << " on port " << mpk_port << endl;
+
+        Ice::ObjectPrx baseMpk = ic->stringToProxy(mpk_name + ":tcp -h " + mpk_host + " -p " + mpk_port);
         MPKPrx mpk = MPKPrx::checkedCast(baseMpk);
         if (!mpk)
             throw "Invalid proxy";

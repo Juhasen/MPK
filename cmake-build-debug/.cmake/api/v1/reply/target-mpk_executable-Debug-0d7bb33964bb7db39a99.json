@@ -42,7 +42,10 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=c++11 -fdiagnostics-color=always"
+					"fragment" : "-g"
+				},
+				{
+					"fragment" : "-std=c++11"
 				}
 			],
 			"language" : "CXX",

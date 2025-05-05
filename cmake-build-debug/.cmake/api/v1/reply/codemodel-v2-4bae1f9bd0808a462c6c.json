@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "mpk_executable::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-mpk_executable-Debug-c8a21715d237b26ae1dc.json",
+					"jsonFile" : "target-mpk_executable-Debug-0d7bb33964bb7db39a99.json",
 					"name" : "mpk_executable",
 					"projectIndex" : 0
 				}
@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug",
-		"source" : "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk"
+		"build" : "/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK/cmake-build-debug",
+		"source" : "/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 6
+		"minor" : 3
 	}
 }

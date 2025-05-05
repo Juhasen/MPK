@@ -50,17 +50,20 @@ TramStopI::UpdateTramInfo(const TramPrx &tram,
 int
 main(int argc, char *argv[]) {
     int status = 0;
-    cout << "Enter tram_stop configuration (tram_stop_name/port): ";
+    cout << "Enter tram_stop configuration (tram_stop_name/host/port): ";
     string input;
     cin >> input;
-    string tram_stop_name = input.substr(0, input.find('/'));
-    string port = input.substr(input.find('/') + 1);
-    cout << "Creating tram_stop: " << tram_stop_name << " on port " + port << endl;
+    size_t first_slash = input.find('/');
+    size_t second_slash = input.find('/', first_slash + 1);
+    string tram_stop_name = input.substr(0, first_slash);
+    string host = input.substr(first_slash + 1, second_slash - 1);
+    string port = input.substr(second_slash + 1);
+    cout << "Creating tram_stop: " << tram_stop_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
         ic = Ice::initialize(argc, argv);
         Ice::ObjectAdapterPtr adapter =
-                ic->createObjectAdapterWithEndpoints("TramStopAdapter", "default -p " + port);
+                ic->createObjectAdapterWithEndpoints("TramStopAdapter", "tcp -h " + host + " -p " + port);
         Ice::ObjectPtr object = new TramStopI(tram_stop_name);
         adapter->add(object, Ice::stringToIdentity(tram_stop_name));
         adapter->activate();

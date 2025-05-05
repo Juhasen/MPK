@@ -1,3 +1,3 @@
-/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles/mpk_executable.dir
-/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK/cmake-build-debug/CMakeFiles/mpk_executable.dir
+/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/d/Uczelniany_stuff/studia/Semestr 6/RSO/MPK/MPK/cmake-build-debug/CMakeFiles/rebuild_cache.dir
