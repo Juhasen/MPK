@@ -83,6 +83,9 @@ TramI::getStockNumber(const Ice::Current &current) {
     return stock_number_;
 }
 
+//TODO: w tramwaju zrobić StopList, w którym będą przystanki, na których tramwaj się zatrzymuje i o któej godzinie
+//TODO: Linia rejestruje tramwaj, bo tramstop bierze tramwaje i z nich StopList i dzieje się magia
+
 int
 main(int argc, char *argv[]) {
     int status = 0;

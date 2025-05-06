@@ -125,6 +125,52 @@ main(int argc, char *argv[]) {
                     }
                     break;
                 }
+                case '2': {
+                    string object_type;
+                    cout << "Enter type of object tram/stop (t/s): " << endl;
+                    cin >> object_type;
+
+                    if (object_type == "t") {
+                        DepoList depos = mpk->getDepos();
+                        cout << "Available trams:" << endl;
+                        for (DepoInfo depo: depos) {
+                            TramList trams = depo.stop->getOnlineTrams();
+                            for (const TramInfo &tramInfo: trams) {
+                                cout << "| " << tramInfo.tram->getStockNumber() << " |" << endl;
+                            }
+                        }
+                        cout << "Enter tram stock number: ";
+                        string tram_stock_number;
+                        cin >> tram_stock_number;
+                        for (DepoInfo depo: depos) {
+                            TramPrx tram = depo.stop->getTram(tram_stock_number);
+                            if (tram) {
+                                cout << "Tram found: " << tram->getStockNumber() << endl;
+                                cout << "Unregistering passenger..." << endl;
+                                tram->UnregisterPassenger(passenger);
+                                cout << "Passenger unregistered." << endl;
+                                break;
+                            }
+                        }
+                    } else if (object_type == "s") {
+                        TramStopList tram_stops = mpk->getTramStops();
+                        cout << "Available stops:" << endl;
+                        for (TramStopPrx stop: tram_stops) {
+                            cout << "| " << stop->getName() << " |" << endl;
+                        }
+                        cout << "Enter stop name: ";
+                        string stop_name;
+                        cin >> stop_name;
+                        TramStopPrx tram_stop = mpk->getTramStop(stop_name);
+                        if (!tram_stop)
+                            throw "Invalid proxy";
+                        tram_stop->UnregisterPassenger(passenger);
+                        cout << "\nPassenger unregistered from TramStop." << endl;
+                    } else {
+                        cout << "Invalid type!" << endl;
+                    }
+                    break;
+                }
                 default: {
                     cout << "Bad choice!" << endl;
                     break;

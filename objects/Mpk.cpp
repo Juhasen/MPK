@@ -150,12 +150,12 @@ void MPKI::setStopsForLine(const LinePrx &line_prx, const string &filename, cons
         if (!tram_stop) {
             throw "Invalid proxy";
         }
-
+        // TODO: dodawać same tramstopy
         stop.stop = tram_stop;
         registerTramStop(tram_stop, current);
         stops.push_back(stop);
     }
-
+//TODO: w depo mapa <tramstop, TRAMLIST<czas, tramwaj>>, dla tramstopa ustalić czas + tramwaj
     file.close();
     line_prx->setStops(stops);
 }
