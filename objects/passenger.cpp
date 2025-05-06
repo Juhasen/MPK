@@ -6,20 +6,40 @@ PassengerI::updateTramInfo(const TramPrx &tram,
                            const StopList &stops,
                            const Ice::Current &current) {
     cout << "\nTram updated: " << tram->getStockNumber() << endl;
-    for (const StopInfo &stop: stops) {
-        cout << "Stop: " << stop.stop->getName() << endl;
+    for (const StopInfo &info: stops) {
+        cout << "Stop: " << info.stop->getName() << " " << info.time.hour << ":" << info.time.minute << endl;
     }
 }
 
 void
-PassengerI::updateStopInfo(const StopPrx &stop,
+PassengerI::updateStopInfo(const TramStopPrx &stop,
                            const TramList &trams,
                            const Ice::Current &current) {
     // Update the stop information
     cout << "\nStop updated: " << stop->getName() << endl;
     for (const TramInfo &tram: trams) {
-        cout << "Tram: " << tram.tram->getStockNumber() << endl;
+        cout << "Tram: " << tram.tram->getStockNumber() << " " << tram.time.hour << ":" << tram.time.minute << endl;
     }
+}
+
+void
+PassengerI::setTram(const TramPrx &tram, const Ice::Current &current) {
+    tram_ = tram;
+}
+
+TramPrx
+PassengerI::getTram(const Ice::Current &current) {
+    return tram_;
+}
+
+void
+PassengerI::setTramStop(const TramStopPrx &stop, const Ice::Current &current) {
+    stop_ = stop;
+}
+
+TramStopPrx
+PassengerI::getTramStop(const Ice::Current &current) {
+    return stop_;
 }
 
 int
@@ -32,6 +52,10 @@ main(int argc, char *argv[]) {
     string passenger_name = input.substr(0, first_slash);
     string port = input.substr(first_slash + 1);
     string host = getNetworkInterface();
+    if (!isPortBusy(host, port)) {
+        cerr << "Port " << port << " is not available." << endl;
+        return 1;
+    }
     cout << "Creating passenger: " << passenger_name << " on host " << host << " on port " + port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -55,7 +79,7 @@ main(int argc, char *argv[]) {
         string mpk_port = input.substr(mpk_second_slash + 1);
 
         cout << "Searching for mpk with name: " << mpk_name
-             << " on host " << mpk_host << " on port " << mpk_port << endl;
+                << " on host " << mpk_host << " on port " << mpk_port << endl;
 
         Ice::ObjectPrx baseMpk = ic->stringToProxy(mpk_name + ":tcp -h " + mpk_host + " -p " + mpk_port);
         MPKPrx mpk = MPKPrx::checkedCast(baseMpk);
@@ -64,10 +88,14 @@ main(int argc, char *argv[]) {
 
         cout << "Passenger connected to MPK." << endl;
 
+        passenger->setTram(nullptr);
+        passenger->setTramStop(nullptr);
+
         while (true) {
             cout << "\nMENU:" << endl;
             cout << "1. Register." << endl;
             cout << "2. Unregister." << endl;
+            cout << "3. Show next trams for registered tram stop." << endl;
             cout << "0. Exit." << endl;
             cout << "Enter your choice: ";
             char choice = '0';
@@ -100,13 +128,20 @@ main(int argc, char *argv[]) {
                             if (tram) {
                                 cout << "Tram found: " << tram->getStockNumber() << endl;
                                 cout << "Registering passenger..." << endl;
+                                passenger->setTram(tram);
                                 tram->RegisterPassenger(passenger);
                                 cout << "Passenger registered." << endl;
+                                if (passenger->getTramStop()) {
+                                    passenger->getTramStop()->UnregisterPassenger(passenger);
+                                    passenger->setTramStop(nullptr);
+                                    cout << "Passenger unregistered from TramStop." << endl;
+                                    break;
+                                }
                                 break;
                             }
                         }
                     } else if (object_type == "s") {
-                        TramStopList tram_stops  = mpk->getTramStops();
+                        TramStopList tram_stops = mpk->getTramStops();
                         cout << "Available stops:" << endl;
                         for (TramStopPrx stop: tram_stops) {
                             cout << "| " << stop->getName() << " |" << endl;
@@ -117,9 +152,14 @@ main(int argc, char *argv[]) {
                         TramStopPrx tram_stop = mpk->getTramStop(stop_name);
                         if (!tram_stop)
                             throw "Invalid proxy";
+                        passenger->setTramStop(tram_stop);
                         tram_stop->RegisterPassenger(passenger);
                         cout << "\nPassenger registered to TramStop." << endl;
-
+                        if (passenger->getTram()) {
+                            passenger->getTram()->UnregisterPassenger(passenger);
+                            passenger->setTram(nullptr);
+                            cout << "Passenger unregistered from Tram." << endl;
+                        }
                     } else {
                         cout << "Invalid type!" << endl;
                     }

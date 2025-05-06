@@ -1,2 +1,11 @@
-12:00 192.168.248.68 10050 Woronicza
-12:09 192.168.248.68 10051 Lakowa
+10050 Woronicza
+10051 Lakowa
+10052 Nowowiejska
+10053 PlacZbawiciela
+10054 Marszalkowska
+10055 Centrum
+10056 DworzecCentralny
+10057 RondoONZ
+10058 RondoDaszynskiego
+10059 Wolska
+10060 CmentarzWolski

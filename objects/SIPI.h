@@ -1,11 +1,18 @@
 #ifndef __SIPI_h__
 #define __SIPI_h__
 
+#include <iostream>
+#include <string>
+#include <cstring>      // memset, strerror
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>     // close
+#include <errno.h>
 #include <memory>
 #include <chrono>
 #include <fstream>
 #include <ifaddrs.h>
-#include <sstream>
 #include <arpa/inet.h>
 #include <Ice/Ice.h>
 #include "../SIP.h"
@@ -42,6 +49,9 @@ public:
 
     virtual void UpdateTramInfo(const TramPrx &tram, const Time &time, const Ice::Current &) override;
 
+    virtual void setNextTrams(const TramList &next_trams,
+                              const Ice::Current &current) override;
+
 private:
     string name_;
     TramList next_trams_;
@@ -50,15 +60,15 @@ private:
 
 class LineI : public virtual Line {
 public:
-    LineI(const std::string &name) : name_(name) {
+    LineI(const string &name) : name_(name) {
     }
 
-    virtual TramList getTrams(const Ice::Current &) override;
+    virtual TramPrxList getTrams(const Ice::Current &) override;
 
-    virtual StopList getStops(const Ice::Current &) override;
+    virtual TramStopList getStops(const Ice::Current &) override;
 
     virtual TramStopPrx getStop(const string &name,
-                          const Ice::Current &) override;
+                                const Ice::Current &) override;
 
     virtual void registerTram(const TramPrx &tram,
                               const Ice::Current &) override;
@@ -66,15 +76,15 @@ public:
     virtual void unregisterTram(const TramPrx &tram,
                                 const Ice::Current &) override;
 
-    virtual void setStops(const StopList &stop_list,
+    virtual void setStops(const TramStopList &stop_list,
                           const Ice::Current &) override;
 
     virtual string getName(const Ice::Current &) override;
 
 private:
     string name_;
-    StopList stops_;
-    TramList trams_;
+    TramStopList stops_;
+    TramPrxList trams_;
 };
 
 class LineFactoryI : public virtual LineFactory {
@@ -83,6 +93,9 @@ public:
                                const Ice::Current &) override;
 
     virtual double getLoad(const Ice::Current &) override;
+
+private:
+    long load_ = 0;
 };
 
 class StopFactoryI : public virtual StopFactory {
@@ -97,6 +110,7 @@ class MPKI : public virtual MPK {
 public:
     virtual TramStopPrx getTramStop(const string &name,
                                     const Ice::Current &) override;
+
     virtual TramStopList getTramStops(const Ice::Current &current) override;
 
     virtual void registerDepo(const DepoPrx &depo,
@@ -113,7 +127,9 @@ public:
     virtual LineList getLines(const Ice::Current &) override;
 
     virtual LinePrx getLine(const string &name,
-                              const Ice::Current &) override;
+                            const Ice::Current &) override;
+
+    virtual void removeLine(const LinePrx &line, const Ice::Current &current) override;
 
     virtual void registerLineFactory(const LineFactoryPrx &line_factory_prx,
                                      const Ice::Current &) override;
@@ -163,7 +179,7 @@ public:
     virtual TramList getOnlineTrams(const Ice::Current &current) override;
 
     virtual TramPrx getTram(const string &stock_number,
-                             const Ice::Current &) override;
+                            const Ice::Current &) override;
 
     virtual void showRegisteredTrams(const Ice::Current &) override;
 
@@ -178,6 +194,7 @@ public:
     }
 
     virtual TramStopPrx getLocation(const Ice::Current &) override;
+
     virtual void setLocation(const TramStopPrx &location_prx,
                              const Ice::Current &) override;
 
@@ -186,7 +203,7 @@ public:
     virtual void setLine(const LinePrx &line_prx,
                          const Ice::Current &) override;
 
-    virtual StopList getNextStops(int,
+    virtual StopList getNextStops(int howMany,
                                   const Ice::Current &) override;
 
     virtual void RegisterPassenger(const PassengerPrx &passenger_prx,
@@ -195,14 +212,29 @@ public:
     virtual void UnregisterPassenger(const PassengerPrx &passenger_prx,
                                      const Ice::Current &) override;
 
-    virtual void updatePassengerInfo(const TramPrx& tram,
-                                    const Ice::Current &) override;
+    virtual void updatePassengerInfo(const TramPrx &tram,
+                                     const Ice::Current &) override;
 
     virtual string getStockNumber(const Ice::Current &) override;
 
+    virtual void setDepo(const DepoPrx &depo, const Ice::Current &) override;
+
+    virtual StopList getSchedule(const Ice::Current &) override;
+
+    virtual void setSchedule(const StopList &schedule,
+                             const Ice::Current &) override;
+
+    virtual void updateSchedule(int interval,
+                                const Ice::Current &) override;
+
+    virtual void setTram(const TramPrx &tram, const Ice::Current &) override;
+
 private:
     string stock_number_;
+    TramPrx tram_;
+    DepoPrx depo_;
     LinePrx line_;
+    StopList schedule_;
     TramStopPrx location_;
     PassengerList passengers_;
 };
@@ -213,15 +245,27 @@ public:
                                 const StopList &stop_list,
                                 const Ice::Current &) override;
 
-    virtual void updateStopInfo(const StopPrx &stop_prx,
+    virtual void updateStopInfo(const TramStopPrx &stop_prx,
                                 const TramList &tram_list,
                                 const Ice::Current &) override;
+
+    virtual void setTram(const TramPrx &tram_prx, const Ice::Current &) override;
+
+    virtual void setTramStop(const TramStopPrx &stop_prx, const Ice::Current &) override;
+
+    virtual TramPrx getTram(const Ice::Current &) override;
+
+    virtual TramStopPrx getTramStop(const Ice::Current &) override;
+
+private:
+    TramPrx tram_;
+    TramStopPrx stop_;
 };
 
 
-inline std::string getNetworkInterface() {
+inline string getNetworkInterface() {
     ifaddrs *interfaces = nullptr, *ifa = nullptr;
-    std::vector<std::pair<std::string, std::string>> interfaceList;
+    vector<pair<string, string> > interfaceList;
 
     if (getifaddrs(&interfaces) == -1) {
         perror("getifaddrs");
@@ -229,43 +273,75 @@ inline std::string getNetworkInterface() {
     }
 
     // Collect and display all network interfaces with IPv4 addresses
-    std::cout << "Available network interfaces:\n";
+    cout << "Available network interfaces:\n";
     int index = 1;
     for (ifa = interfaces; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr == nullptr) continue;
 
-        if (ifa->ifa_addr->sa_family == AF_INET) { // IPv4 only
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            // IPv4 only
             char addressBuffer[INET_ADDRSTRLEN];
-            void* addrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            void *addrPtr = &((struct sockaddr_in *) ifa->ifa_addr)->sin_addr;
             inet_ntop(AF_INET, addrPtr, addressBuffer, INET_ADDRSTRLEN);
 
-            std::string name(ifa->ifa_name);
-            std::string ip(addressBuffer);
+            string name(ifa->ifa_name);
+            string ip(addressBuffer);
             interfaceList.emplace_back(name, ip);
 
-            std::cout << index << ") " << name << " : " << ip << "\n";
+            cout << index << ") " << name << " : " << ip << "\n";
             ++index;
         }
     }
 
     if (interfaceList.empty()) {
-        std::cerr << "No IPv4 interfaces found.\n";
+        cerr << "No IPv4 interfaces found.\n";
         freeifaddrs(interfaces);
         return "";
     }
 
     int choice = 0;
-    std::cout << "\nEnter the number of the interface to select: ";
-    std::cin >> choice;
+    cout << "\nEnter the number of the interface to select: ";
+    cin >> choice;
 
     freeifaddrs(interfaces);
 
     if (choice < 1 || choice > static_cast<int>(interfaceList.size())) {
-        std::cerr << "Invalid choice.\n";
+        cerr << "Invalid choice.\n";
         return "";
     }
 
-    const auto& [name, ip] = interfaceList[choice - 1];
+    const auto &[name, ip] = interfaceList[choice - 1];
     return ip;
+}
+
+inline bool isPortBusy(const string &host, const string &port) {
+    addrinfo hints, *res;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM;
+
+    int status = getaddrinfo(host.c_str(), port.c_str(), &hints, &res);
+    if (status != 0) {
+        cerr << "getaddrinfo: " << gai_strerror(status) << "\n";
+        return false;
+    }
+
+    int sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (sockfd == -1) {
+        cerr << "socket: " << strerror(errno) << "\n";
+        freeaddrinfo(res);
+        return false;
+    }
+
+    status = bind(sockfd, res->ai_addr, res->ai_addrlen);
+    if (status == -1) {
+        close(sockfd);
+        freeaddrinfo(res);
+        return false;
+    }
+
+    close(sockfd);
+    freeaddrinfo(res);
+    return true;
 }
 #endif

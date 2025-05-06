@@ -7,6 +7,7 @@ LineFactoryI::createLine(const string &name, const Ice::Current &current) {
         Ice::ObjectPtr servant = new LineI(name);
         current.adapter->add(servant, Ice::stringToIdentity(name));
         cout << "Creating line: " << name << endl;
+        load_++;
         return Ice::uncheckedCast<LinePrx>(
             current.adapter->createProxy(Ice::stringToIdentity(name))
         );
@@ -17,7 +18,7 @@ LineFactoryI::createLine(const string &name, const Ice::Current &current) {
 
 double
 LineFactoryI::getLoad(const Ice::Current &current) {
-    return 2.32;
+    return load_;
 }
 
 
@@ -31,6 +32,10 @@ main(int argc, char *argv[]) {
     string line_factory_name = input.substr(0, first_slash);
     string port = input.substr(first_slash + 1);
     string host = getNetworkInterface();
+    if (!isPortBusy(host, port)) {
+        cerr << "Port " << port << " is not available." << endl;
+        return 1;
+    }
     cout << "Creating LineFactory: " << line_factory_name << " on host " << host << " on port " << port << endl;
     Ice::CommunicatorPtr ic;
     try {
@@ -43,7 +48,12 @@ main(int argc, char *argv[]) {
         cout << "Line Factory object created." << endl;
 
         ic->waitForShutdown();
-    } catch (const Ice::Exception &e) {
+    }
+    catch (const Ice::EndpointParseException &ex) {
+        cerr << "Błąd parsowania endpointów: " << ex.what() << endl;
+        return 1;
+    }
+    catch (const Ice::Exception &e) {
         cerr << e << endl;
         status = 1;
     } catch (const char *msg) {

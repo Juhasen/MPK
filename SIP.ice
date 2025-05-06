@@ -10,6 +10,8 @@ module SIP {
 
   interface Stop;
 
+  interface Line;
+
   interface Stop {
     string getName();
   };
@@ -29,42 +31,46 @@ module SIP {
      TramStop* stop;
   };
 
-  sequence<StopInfo> StopList;
-
   struct TramInfo {
      Time time;
      Tram* tram;
   };
-
-  sequence<TramInfo> TramList;
 
   struct DepoInfo {
      string name;
      Depo* stop;
   };
 
-  sequence<DepoInfo> DepoList;
+
+    sequence<TramStop*> TramStopList;
+    sequence <Passenger*> PassengerList;
+    sequence<StopInfo> StopList;
+    sequence<TramInfo> TramList;
+    sequence<DepoInfo> DepoList;
+    sequence<Line*> LineList;
+    sequence<Tram*> TramPrxList;
+
+
 
   interface TramStop {
      string getName();
      TramList getNextTrams(int howMany);
+     void setNextTrams(TramList trams);
      void RegisterPassenger(Passenger* p);
      void UnregisterPassenger(Passenger* p);
-     void UpdateTramInfo(Tram* tram, Time time);
+     void UpdateTramInfo(Tram* t, Time time);
   }
 
   interface Line
   {
-		TramList getTrams();
-		StopList getStops();
+		TramPrxList getTrams();
+		TramStopList getStops();
 		TramStop* getStop(string name);
 		void registerTram(Tram* tram);
 		void unregisterTram(Tram* tram);
-		void setStops(StopList sl);
+		void setStops(TramStopList sl);
 		string getName();
   };
-
-  sequence<Line*> LineList;
 
   interface LineFactory {
 		Line* createLine(string name);
@@ -76,8 +82,6 @@ module SIP {
 		double getLoad();
   };
 
-  sequence<TramStop*> TramStopList;
-
   interface MPK {
     TramStop* getTramStop(string name);
     TramStopList getTramStops();
@@ -88,6 +92,7 @@ module SIP {
     LineList getLines();
     Line* getLine(string name);
     void addLine(Line* l);
+    void removeLine(Line* l);
     void setStopsForLine(Line* l, string filename);
     void addStop(Stop* st);
     void registerLineFactory(LineFactory* lf);
@@ -116,14 +121,21 @@ module SIP {
     void UnregisterPassenger(Passenger* p);
     void updatePassengerInfo(Tram* tram);
     string getStockNumber();
+    void setDepo(Depo* depo);
+    StopList getSchedule();
+    void setSchedule(StopList sl);
+    void updateSchedule(int interval);
+    void setTram(Tram* tram);
   };
-
-  sequence <Passenger*> PassengerList;
 
   interface Passenger
   {
 	  void updateTramInfo(Tram* tram, StopList stops);
-	  void updateStopInfo(Stop* stop, TramList trams);
+	  void updateStopInfo(TramStop* stop, TramList trams);
+	  TramStop* getTramStop();
+	  void setTramStop(TramStop* ts);
+	  void setTram(Tram* tram);
+	  Tram* getTram();
   };
 
 };

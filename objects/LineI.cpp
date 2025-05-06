@@ -1,13 +1,13 @@
 #include <Ice/Ice.h>
 #include "SIPI.h"
 
-TramList
+TramPrxList
 LineI::getTrams(const Ice::Current& current)
 {
-    return TramList();
+    return trams_;
 }
 
-StopList
+TramStopList
 LineI::getStops(const Ice::Current& current)
 {
     return stops_;
@@ -17,9 +17,9 @@ TramStopPrx
 LineI::getStop(const string& name,
                      const Ice::Current& current)
 {
-    for (const StopInfo& stop: stops_) {
-        if (stop.stop->getName() == name) {
-            return stop.stop;
+    for (const TramStopPrx& stop: stops_) {
+        if (stop->getName() == name) {
+            return stop;
         }
     }
     return nullptr;
@@ -29,29 +29,24 @@ void
 LineI::registerTram(const TramPrx& tram,
                          const Ice::Current& current)
 {
-    TramInfo tramInfo;
-    tramInfo.tram = tram;
-    tramInfo.time.hour = 0;
-    tramInfo.time.minute = 0;
-    trams_.push_back(tramInfo);
+    trams_.push_back(tram);
 }
 
 void
 LineI::unregisterTram(const TramPrx& tram,
                            const Ice::Current& current)
 {
-    auto it = std::remove_if(trams_.begin(), trams_.end(),
-                             [&tram](const TramInfo& tramInfo) {
-                                 return tramInfo.tram->getStockNumber() == tram->getStockNumber();
-                             });
+    auto it = std::find(trams_.begin(), trams_.end(), tram);
     if (it != trams_.end()) {
-        trams_.erase(it, trams_.end());
+        trams_.erase(it);
+        cout << "Tram unregistered: " << tram->ice_toString() << endl;
+    } else {
+        cout << "Tram not found in the list." << endl;
     }
-    cout << "Tram unregistered." << endl;
 }
 
 void
-LineI::setStops(const StopList& sl,
+LineI::setStops(const TramStopList& sl,
                      const Ice::Current& current)
 {
     stops_ = sl;

@@ -11,6 +11,12 @@ TramI::setLocation(const TramStopPrx &location_prx, const Ice::Current &) {
     location_ = location_prx;
 }
 
+void
+TramI::setDepo(const DepoPrx &depo,
+                   const Ice::Current &current) {
+    depo_ = depo;
+}
+
 LinePrx
 TramI::getLine(const Ice::Current &current) {
     return line_;
@@ -22,6 +28,12 @@ TramI::setLine(const LinePrx &line,
     line_ = line;
 }
 
+void
+TramI::setTram(const TramPrx &tram,
+               const Ice::Current &current) {
+    tram_ = tram;
+}
+
 StopList
 TramI::getNextStops(int howMany,
                     const Ice::Current &current) {
@@ -29,7 +41,7 @@ TramI::getNextStops(int howMany,
         return StopList();
     }
 
-    StopList stops = line_->getStops();
+    StopList stops = schedule_;
     unsigned int totalStops = stops.size();
 
     //get index of stop from current position
@@ -71,11 +83,11 @@ TramI::UnregisterPassenger(const PassengerPrx &passenger,
 
 void
 TramI::updatePassengerInfo(const TramPrx& tram, const Ice::Current &current) {
-    StopList stop_list = getNextStops(3, current);
+    StopList stop_list = getNextStops(5, current);
     for (const auto &passenger: passengers_) {
+        cout << "\nTram info updated tram->updatePassengerInfo" << endl;
         passenger->updateTramInfo(tram, stop_list);
     }
-    cout << "\nTram info updated." << endl;
 }
 
 string
@@ -83,11 +95,33 @@ TramI::getStockNumber(const Ice::Current &current) {
     return stock_number_;
 }
 
-//TODO: w tramwaju zrobić StopList, w którym będą przystanki, na których tramwaj się zatrzymuje i o któej godzinie
-//TODO: Linia rejestruje tramwaj, bo tramstop bierze tramwaje i z nich StopList i dzieje się magia
+void
+TramI::setSchedule(const StopList &schedule,
+                    const Ice::Current &current) {
+    schedule_ = schedule;
+}
+
+StopList
+TramI::getSchedule(const Ice::Current &current) {
+    return schedule_;
+}
+
+void
+TramI::updateSchedule(const int interval , const Ice::Current &current) {
+    cout << "\nSchedule updated." << endl;
+    StopList schedule = tram_->getSchedule();
+    for (StopInfo & info: schedule) {
+        info.time.hour += interval / 60;
+        info.time.minute += interval % 60;
+        info.stop->UpdateTramInfo(tram_, info.time);
+    }
+    //clear next trams i update
+    tram_->setSchedule(schedule);
+}
 
 int
 main(int argc, char *argv[]) {
+
     int status = 0;
     cout << "Enter tram configuration (tram_stock_number/port): ";
     string input;
@@ -112,6 +146,9 @@ main(int argc, char *argv[]) {
         if (!tram) {
             throw "Invalid proxy";
         }
+
+        tram->setTram(tram);
+
         while (true) {
             cout << "\nMENU:" << endl;
             cout << "1. Show stops." << endl;
@@ -127,26 +164,44 @@ main(int argc, char *argv[]) {
             switch (choice) {
                 case '1': {
                     if (!tram->getLocation()) {
-                        cout << "Tram is not assigned to any stop." << endl;
+                        cout << "Tram is not assigned to any line." << endl;
                         break;
                     }
                     cout << "Current position: " << tram->getLocation()->getName() << endl;
                     cout << "Assigned stops:" << endl;
-                    StopList stops = tram->getLine()->getStops();
+                    TramStopList stops = tram->getLine()->getStops();
                     if (stops.size() == 0 || !stops.data()) {
                         cout << "No stops found." << endl;
                         break;
                     }
-                    for (StopInfo stop: stops) {
-                        cout << "Stop: " << stop.stop->getName() << endl;
+                    for (TramStopPrx stop: stops) {
+                        cout << "Stop: " << stop->getName() << endl;
                     }
                     break;
                 }
                 case 'n': {
-                    cout << "Previous position: " << tram->getLocation()->getName() << endl;
+                    if (!tram->getLocation()) {
+                        cout << "Tram is not assigned to any line." << endl;
+                        break;
+                    }
+                    string previous = tram->getLocation()->getName();
+                    cout << "Previous position: " << previous << endl;
                     tram->setLocation(tram->getNextStops(1)[0].stop);
                     cout << "New position: " << tram->getLocation()->getName() << endl;
+
+                    TramStopPrx currentStop = tram->getLocation();
+                    if (currentStop->getName() == tram->getLine()->getStops()[0]->getName()) {
+                        tram->updateSchedule(7);
+                    }
                     tram->updatePassengerInfo(tram);
+
+                    StopList schedule = tram->getSchedule();
+                    for (StopInfo &info: schedule) {
+                        if (info.stop->getName() == currentStop->getName()) {
+                            currentStop->UpdateTramInfo(tram, info.time);
+                            break;
+                        }
+                    }
                     break;
                 }
                 default: {

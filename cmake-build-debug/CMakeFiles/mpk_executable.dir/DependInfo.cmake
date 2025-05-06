@@ -8,14 +8,15 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Depo.cpp" "CMakeFiles/mpk_executable.dir/objects/Depo.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Depo.cpp.o.d"
-  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Line.cpp" "CMakeFiles/mpk_executable.dir/objects/Line.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Line.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/DepoI.cpp" "CMakeFiles/mpk_executable.dir/objects/DepoI.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/DepoI.cpp.o.d"
   "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/LineFactory.cpp" "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/LineFactory.cpp.o.d"
-  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Mpk.cpp" "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Mpk.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/LineI.cpp" "CMakeFiles/mpk_executable.dir/objects/LineI.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/LineI.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/MPKI.cpp" "CMakeFiles/mpk_executable.dir/objects/MPKI.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/MPKI.cpp.o.d"
   "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Passenger.cpp" "CMakeFiles/mpk_executable.dir/objects/Passenger.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Passenger.cpp.o.d"
   "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/StopFactory.cpp" "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/StopFactory.cpp.o.d"
-  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/Tram.cpp" "CMakeFiles/mpk_executable.dir/objects/Tram.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/Tram.cpp.o.d"
-  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/TramStop.cpp" "CMakeFiles/mpk_executable.dir/objects/TramStop.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/TramStop.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/TramStopI.cpp" "CMakeFiles/mpk_executable.dir/objects/TramStopI.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/TramStopI.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/system.cpp" "CMakeFiles/mpk_executable.dir/objects/system.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/system.cpp.o.d"
+  "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/objects/tram.cpp" "CMakeFiles/mpk_executable.dir/objects/tram.cpp.o" "gcc" "CMakeFiles/mpk_executable.dir/objects/tram.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

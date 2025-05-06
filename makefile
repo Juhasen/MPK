@@ -1,29 +1,24 @@
 .PHONY: all clean
-all: slice line_factory stop_factory mpk depo tram tram_stop passenger
+all: slice line_factory system tram passenger
 
 slice:
 	slice2cpp SIP.ice
 
-mpk: objects/Mpk.cpp
-	g++ -I. objects/Mpk.cpp SIP.cpp -lIce -lpthread -o mpk
+system: objects/system.cpp objects/MPKI.cpp objects/TramStopI.cpp objects/DepoI.cpp
+	g++ -I. objects/system.cpp objects/MPKI.cpp objects/TramStopI.cpp objects/DepoI.cpp  SIP.cpp -lIce -lpthread -o system
 
-line_factory: objects/LineFactory.cpp objects/Line.cpp
-	g++ -I. objects/LineFactory.cpp objects/Line.cpp SIP.cpp -lIce -lpthread -o line_factory
+line_factory: objects/LineI.cpp objects/LineFactory.cpp
+	g++ -I. objects/LineFactory.cpp objects/LineI.cpp SIP.cpp -lIce -lpthread -o line_factory
 
-stop_factory: objects/StopFactory.cpp objects/Stop.cpp
-	g++ -I. objects/StopFactory.cpp objects/Stop.cpp SIP.cpp -lIce -lpthread -o stop_factory
+tram: objects/tram.cpp
+	g++ -I. objects/tram.cpp SIP.cpp -lIce -lpthread -o tram
 
-depo: objects/Depo.cpp
-	g++ -I. objects/Depo.cpp SIP.cpp -lIce -lpthread -o depo
-
-tram: objects/Tram.cpp
-	g++ -I. objects/Tram.cpp SIP.cpp -lIce -lpthread -o tram
-
-tram_stop: objects/TramStop.cpp
-	g++ -I. objects/TramStop.cpp SIP.cpp -lIce -lpthread -o tram_stop
-
-passenger: objects/Passenger.cpp
-	g++ -I. objects/Passenger.cpp SIP.cpp -lIce -lpthread -o passenger
+passenger: objects/passenger.cpp
+	g++ -I. objects/passenger.cpp SIP.cpp -lIce -lpthread -o passenger
 
 clean:
-	-rm SIP.cpp SIP.h line_factory stop_factory mpk depo tram tram_stop passenger
+	-rm SIP.cpp SIP.h line_factory system tram passenger
+
+
+#stop_factory: objects/StopFactory.cpp objects/Stop.cpp
+#	g++ -I. objects/StopFactory.cpp objects/Stop.cpp SIP.cpp -lIce -lpthread -o stop_factory

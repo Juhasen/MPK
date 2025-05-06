@@ -81,12 +81,12 @@ clean: CMakeFiles/mpk_executable.dir/clean
 CMakeFiles/mpk_executable.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mpk_executable.dir/build.make CMakeFiles/mpk_executable.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8,9 "Built target mpk_executable"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8,9,10 "Built target mpk_executable"
 .PHONY : CMakeFiles/mpk_executable.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/mpk_executable.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" 9
+	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" 10
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/mpk_executable.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/Krystian/Documents/Studia/SEM VI/RSO/mpk/cmake-build-debug/CMakeFiles" 0
 .PHONY : CMakeFiles/mpk_executable.dir/rule
