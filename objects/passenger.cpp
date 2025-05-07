@@ -12,14 +12,9 @@ PassengerI::updateTramInfo(const TramPrx &tram,
 }
 
 void
-PassengerI::updateStopInfo(const TramStopPrx &stop,
-                           const TramList &trams,
+PassengerI::updateTramStopInfo(const TramPrx &tram,
                            const Ice::Current &current) {
-    // Update the stop information
-    cout << "\nStop updated: " << stop->getName() << endl;
-    for (const TramInfo &tram: trams) {
-        cout << "Tram: " << tram.tram->getStockNumber() << " " << tram.time.hour << ":" << tram.time.minute << endl;
-    }
+    cout << "\nTram " << tram->getStockNumber() << " reached subscripted tram stop" << endl;
 }
 
 void
@@ -65,9 +60,14 @@ main(int argc, char *argv[]) {
         Ice::ObjectPtr object = new PassengerI;
         adapter->add(object, Ice::stringToIdentity(passenger_name));
         adapter->activate();
+        auto comm = ic;
+        std::thread([comm]() {
+            comm->waitForShutdown();
+        }).detach();
 
-        PassengerPrx passenger = PassengerPrx::uncheckedCast(adapter->createProxy(
-            Ice::stringToIdentity(passenger_name)));
+        PassengerPrx passenger = PassengerPrx::uncheckedCast(
+            adapter->createProxy(Ice::stringToIdentity(passenger_name))
+        );
         cout << "Passenger object created." << endl;
 
         cout << "Enter mpk configuration (mpk_name/host/port): ";
@@ -95,7 +95,6 @@ main(int argc, char *argv[]) {
             cout << "\nMENU:" << endl;
             cout << "1. Register." << endl;
             cout << "2. Unregister." << endl;
-            cout << "3. Show next trams for registered tram stop." << endl;
             cout << "0. Exit." << endl;
             cout << "Enter your choice: ";
             char choice = '0';

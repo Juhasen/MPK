@@ -13,7 +13,7 @@ TramI::setLocation(const TramStopPrx &location_prx, const Ice::Current &) {
 
 void
 TramI::setDepo(const DepoPrx &depo,
-                   const Ice::Current &current) {
+               const Ice::Current &current) {
     depo_ = depo;
 }
 
@@ -82,8 +82,8 @@ TramI::UnregisterPassenger(const PassengerPrx &passenger,
 }
 
 void
-TramI::updatePassengerInfo(const TramPrx& tram, const Ice::Current &current) {
-    StopList stop_list = getNextStops(5, current);
+TramI::updatePassengerInfo(const TramPrx &tram, const Ice::Current &current) {
+    StopList stop_list = getNextStops(3, current);
     for (const auto &passenger: passengers_) {
         cout << "\nTram info updated tram->updatePassengerInfo" << endl;
         passenger->updateTramInfo(tram, stop_list);
@@ -97,7 +97,7 @@ TramI::getStockNumber(const Ice::Current &current) {
 
 void
 TramI::setSchedule(const StopList &schedule,
-                    const Ice::Current &current) {
+                   const Ice::Current &current) {
     schedule_ = schedule;
 }
 
@@ -107,13 +107,12 @@ TramI::getSchedule(const Ice::Current &current) {
 }
 
 void
-TramI::updateSchedule(const int interval , const Ice::Current &current) {
+TramI::updateSchedule(const int interval, const Ice::Current &current) {
     cout << "\nSchedule updated." << endl;
     StopList schedule = tram_->getSchedule();
-    for (StopInfo & info: schedule) {
+    for (StopInfo &info: schedule) {
         info.time.hour += interval / 60;
         info.time.minute += interval % 60;
-        info.stop->UpdateTramInfo(tram_, info.time);
     }
     //clear next trams i update
     tram_->setSchedule(schedule);
@@ -121,7 +120,6 @@ TramI::updateSchedule(const int interval , const Ice::Current &current) {
 
 int
 main(int argc, char *argv[]) {
-
     int status = 0;
     cout << "Enter tram configuration (tram_stock_number/port): ";
     string input;
@@ -195,12 +193,8 @@ main(int argc, char *argv[]) {
                     }
                     tram->updatePassengerInfo(tram);
 
-                    StopList schedule = tram->getSchedule();
-                    for (StopInfo &info: schedule) {
-                        if (info.stop->getName() == currentStop->getName()) {
-                            currentStop->UpdateTramInfo(tram, info.time);
-                            break;
-                        }
+                    if (currentStop) {
+                        currentStop->updatePassengerInfo(tram);
                     }
                     break;
                 }

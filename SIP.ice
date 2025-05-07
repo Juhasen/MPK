@@ -58,7 +58,7 @@ module SIP {
      void setNextTrams(TramList trams);
      void RegisterPassenger(Passenger* p);
      void UnregisterPassenger(Passenger* p);
-     void UpdateTramInfo(Tram* t, Time time);
+     void updatePassengerInfo(Tram* t);
   }
 
   interface Line
@@ -131,7 +131,7 @@ module SIP {
   interface Passenger
   {
 	  void updateTramInfo(Tram* tram, StopList stops);
-	  void updateStopInfo(TramStop* stop, TramList trams);
+	  void updateTramStopInfo(Tram* tram);
 	  TramStop* getTramStop();
 	  void setTramStop(TramStop* ts);
 	  void setTram(Tram* tram);

@@ -10,6 +10,7 @@
 #include <unistd.h>     // close
 #include <errno.h>
 #include <memory>
+#include <thread>
 #include <chrono>
 #include <fstream>
 #include <ifaddrs.h>
@@ -47,7 +48,7 @@ public:
     virtual void UnregisterPassenger(const PassengerPrx &passenger_prx,
                                      const Ice::Current &) override;
 
-    virtual void UpdateTramInfo(const TramPrx &tram, const Time &time, const Ice::Current &) override;
+    virtual void updatePassengerInfo(const TramPrx &tram, const Ice::Current &) override;
 
     virtual void setNextTrams(const TramList &next_trams,
                               const Ice::Current &current) override;
@@ -245,8 +246,7 @@ public:
                                 const StopList &stop_list,
                                 const Ice::Current &) override;
 
-    virtual void updateStopInfo(const TramStopPrx &stop_prx,
-                                const TramList &tram_list,
+    virtual void updateTramStopInfo(const TramPrx &tram_prx,
                                 const Ice::Current &) override;
 
     virtual void setTram(const TramPrx &tram_prx, const Ice::Current &) override;
