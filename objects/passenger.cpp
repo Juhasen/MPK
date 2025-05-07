@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <Ice/Ice.h>
 #include "SIPI.h"
 
@@ -6,15 +7,21 @@ PassengerI::updateTramInfo(const TramPrx &tram,
                            const StopList &stops,
                            const Ice::Current &current) {
     cout << "\nTram updated: " << tram->getStockNumber() << endl;
-    for (const StopInfo &info: stops) {
-        cout << "Stop: " << info.stop->getName() << " " << info.time.hour << ":" << info.time.minute << endl;
+    for (const StopInfo& info : stops) {
+        // ustawiamy szerokość na 2 znaki i wypełniacz '0'
+        std::cout
+            << "Stop: " << info.stop->getName() << " Time: "
+            << std::setw(2) << std::setfill('0') << info.time.hour
+            << ":"
+            << std::setw(2) << std::setfill('0') << info.time.minute
+            << std::endl;
     }
 }
 
 void
 PassengerI::updateTramStopInfo(const TramPrx &tram,
                            const Ice::Current &current) {
-    cout << "\nTram " << tram->getStockNumber() << " reached subscripted tram stop" << endl;
+    cout << "\nTram " << tram->getStockNumber() << " reached registered tram stop" << endl;
 }
 
 void
@@ -86,6 +93,7 @@ main(int argc, char *argv[]) {
         if (!mpk)
             throw "Invalid proxy";
 
+        std::thread(monitorMPKConnection, mpk, ic).detach();
         cout << "Passenger connected to MPK." << endl;
 
         passenger->setTram(nullptr);

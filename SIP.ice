@@ -122,6 +122,7 @@ module SIP {
     void updatePassengerInfo(Tram* tram);
     string getStockNumber();
     void setDepo(Depo* depo);
+    Depo* getDepo();
     StopList getSchedule();
     void setSchedule(StopList sl);
     void updateSchedule(int interval);

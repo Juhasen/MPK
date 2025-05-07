@@ -17,6 +17,11 @@ TramI::setDepo(const DepoPrx &depo,
     depo_ = depo;
 }
 
+DepoPrx
+TramI::getDepo(const Ice::Current &current) {
+    return depo_;
+}
+
 LinePrx
 TramI::getLine(const Ice::Current &current) {
     return line_;
@@ -73,7 +78,6 @@ TramI::RegisterPassenger(const PassengerPrx &passenger,
 void
 TramI::UnregisterPassenger(const PassengerPrx &passenger,
                            const Ice::Current &current) {
-    //find and remove passenger
     auto it = std::remove(passengers_.begin(), passengers_.end(), passenger);
     if (it != passengers_.end()) {
         passengers_.erase(it, passengers_.end());
@@ -85,7 +89,6 @@ void
 TramI::updatePassengerInfo(const TramPrx &tram, const Ice::Current &current) {
     StopList stop_list = getNextStops(3, current);
     for (const auto &passenger: passengers_) {
-        cout << "\nTram info updated tram->updatePassengerInfo" << endl;
         passenger->updateTramInfo(tram, stop_list);
     }
 }
@@ -107,15 +110,43 @@ TramI::getSchedule(const Ice::Current &current) {
 }
 
 void
-TramI::updateSchedule(const int interval, const Ice::Current &current) {
-    cout << "\nSchedule updated." << endl;
-    StopList schedule = tram_->getSchedule();
-    for (StopInfo &info: schedule) {
-        info.time.hour += interval / 60;
-        info.time.minute += interval % 60;
+TramI::updateSchedule(int interval,
+                      const Ice::Current &current) {
+    // 1. Pobierz stary rozkład
+    StopList oldSchedule = tram_->getSchedule();
+    const int minutesInDay = 24 * 60;
+
+    // 2. Wyznacz czas startu na podstawie ostatniego przystanku
+    int startTotal = 0;
+    if (!oldSchedule.empty()) {
+        auto tLast = oldSchedule.back().time;
+        startTotal = tLast.hour * 60 + tLast.minute + interval;
+        startTotal %= minutesInDay;
+        if (startTotal < 0) startTotal += minutesInDay;
     }
-    //clear next trams i update
-    tram_->setSchedule(schedule);
+    // Jeśli stary rozkład był pusty, zostanie 00:00
+
+    // 3. Pobierz listę przystanków linii
+    auto tramStops = tram_->getLine()->getStops();
+    StopList newSchedule;
+    newSchedule.reserve(tramStops.size());
+
+    // 4. Generuj nowy rozkład: pierwszy od startTotal, kolejne co interval
+    for (size_t i = 0; i < tramStops.size(); ++i) {
+        int t = (startTotal + interval * static_cast<int>(i)) % minutesInDay;
+        if (t < 0) t += minutesInDay;
+
+        StopInfo info;
+        info.stop = tramStops[i];
+        info.time.hour = t / 60;
+        info.time.minute = t % 60;
+        newSchedule.push_back(info);
+    }
+
+    // 5. Ustaw nowy rozkład w obiekcie tramwaju
+    tram_->setSchedule(newSchedule);
+
+    cout << "Schedule rotated: first stop at last_old_time+interval." << endl;
 }
 
 int

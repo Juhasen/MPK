@@ -13,8 +13,8 @@ line_factory: objects/LineI.cpp objects/LineFactory.cpp
 tram: objects/tram.cpp
 	g++ -I. objects/tram.cpp SIP.cpp -lIce -lpthread -o tram
 
-passenger: objects/passenger.cpp
-	g++ -I. objects/passenger.cpp SIP.cpp -lIce -lpthread -o passenger
+passenger: objects/passenger.cpp objects/helpers.cpp
+	g++ -I. objects/passenger.cpp objects/helpers.cpp SIP.cpp -lIce -lpthread -o passenger
 
 clean:
 	-rm SIP.cpp SIP.h line_factory system tram passenger

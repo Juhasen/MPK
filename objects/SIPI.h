@@ -17,6 +17,8 @@
 #include <arpa/inet.h>
 #include <Ice/Ice.h>
 #include "../SIP.h"
+#include "helpers.h"
+
 
 using namespace SIP;
 using namespace std;
@@ -219,6 +221,8 @@ public:
     virtual string getStockNumber(const Ice::Current &) override;
 
     virtual void setDepo(const DepoPrx &depo, const Ice::Current &) override;
+
+    virtual DepoPrx getDepo(const Ice::Current &) override;
 
     virtual StopList getSchedule(const Ice::Current &) override;
 

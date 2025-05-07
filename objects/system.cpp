@@ -1,8 +1,44 @@
+#include <iomanip>
+#include <mutex>
+
 #include "SIPI.h"
 
-//TODO: Godziny na przystankach
+std::mutex tram_mutex;
+std::vector<TramPrx> registered_trams_monitoring;
 
-//TODO: Pingowanie połączeń
+void monitorTrams(MPKPrx mpk) {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::lock_guard<std::mutex> lock(tram_mutex);
+        for (auto it = registered_trams_monitoring.begin(); it != registered_trams_monitoring.end();) {
+            try {
+                // Ustawienie limitu czasu na 2 sekundy
+                TramPrx tram = (*it)->ice_timeout(2000);
+                tram->ice_ping(); // Sprawdzenie dostępności
+                ++it;
+            } catch (const Ice::Exception &e) {
+                std::cerr << "\nTram unresponsive. Unregistering..." << std::endl;
+                try {
+                    LinePrx line = (*it)->getLine();
+                    line->unregisterTram(*it);
+                } catch (...) {
+                    std::cerr << "Failed to unregister tram from line." << std::endl;
+                }
+                try {
+                    DepoPrx depo = (*it)->getDepo();
+                    depo->TramOffline(*it);
+                } catch (...) {
+                    std::cerr << "Failed to unregister tram from depo." << std::endl;
+                }
+                it = registered_trams_monitoring.erase(it);
+            }
+        }
+    }
+}
+
+namespace std {
+    class mutex;
+}
 
 void showMenu() {
     cout << "\nMENU:" << endl;
@@ -69,6 +105,9 @@ main(int argc, char *argv[]) {
         }
 
         mpk->registerLineFactory(lineFactory);
+
+        std::thread monitor_thread(monitorTrams, mpk);
+        monitor_thread.detach();
 
         //Main loop
         while (true) {
@@ -245,6 +284,10 @@ main(int argc, char *argv[]) {
                     cout << "Enter line name: ";
                     cin >> line_name;
                     LinePrx line = mpk->getLine(line_name);
+                    if (!line) {
+                        cout << "Line with name '" << line_name << "' not found." << endl;
+                        break;
+                    }
                     line->registerTram(tram);
                     tram->setLine(line);
                     tram->setLocation(line->getStops()[0]);
@@ -255,28 +298,50 @@ main(int argc, char *argv[]) {
                     int interval;
                     cin >> interval;
 
-                    cout << "Enter start time (hour minute): ";
-                    int hour, minute;
-                    cin >> hour >> minute;
+                    // 1. Pobranie aktualnego czasu systemowego
+                    auto now = std::chrono::system_clock::now();
+                    std::time_t t = std::chrono::system_clock::to_time_t(now);
+                    tm localTime = *std::localtime(&t);
+                    int hour = localTime.tm_hour;
+                    int minute = localTime.tm_min;
+
                     TramStopList tramStops = line->getStops();
                     //schedule
                     StopList schedule;
-                    for (TramStopPrx stop: tramStops) {
+                    const int minutesInDay = 24 * 60;
+                    int startTotal = hour * 60 + minute;
+
+                    schedule.clear();
+                    schedule.reserve(tramStops.size());
+
+                    for (size_t i = 0; i < tramStops.size(); ++i) {
+                        int stopTotal = (startTotal + interval * static_cast<int>(i)) % minutesInDay;
+                        if (stopTotal < 0) stopTotal += minutesInDay;
+                        // zabezpieczenie, gdy i lub interval mogłyby być ujemne
+
                         StopInfo info;
-                        info.stop = stop;
-                        info.time.hour = (hour + interval * schedule.size()) / 60;
-                        info.time.minute = (minute + interval * schedule.size()) % 60;
+                        info.stop = tramStops[i];
+                        info.time.hour = stopTotal / 60;
+                        info.time.minute = stopTotal % 60;
                         schedule.push_back(info);
                     }
 
                     tram->setSchedule(schedule);
                     //show schedule
                     cout << "Tram schedule:" << endl;
-                    for (StopInfo info: schedule) {
-                        cout << "Stop: " << info.stop->getName() << " Time: " << info.time.hour << ":" << info.time.
-                                minute
-                                << endl;
+                    for (const StopInfo &info: schedule) {
+                        // ustawiamy szerokość na 2 znaki i wypełniacz '0'
+                        std::cout
+                                << "Stop: " << info.stop->getName() << " Time: "
+                                << std::setw(2) << std::setfill('0') << info.time.hour
+                                << ":"
+                                << std::setw(2) << std::setfill('0') << info.time.minute
+                                << std::endl;
                     }
+
+
+                    lock_guard<std::mutex> lock(tram_mutex);
+                    registered_trams_monitoring.push_back(tram);
                     cout << "Tram successfully registered." << endl;
                     break;
                 }
@@ -312,6 +377,10 @@ main(int argc, char *argv[]) {
                     LinePrx line = tram->getLine();
                     line->unregisterTram(tram);
                     depo->TramOffline(tram);
+                    std::lock_guard<std::mutex> lock(tram_mutex);
+                    registered_trams_monitoring.erase(
+                        std::remove(registered_trams_monitoring.begin(), registered_trams_monitoring.end(), tram),
+                        registered_trams_monitoring.end());
                     cout << "Tram unregistered." << endl;
                     break;
                 }
@@ -323,8 +392,13 @@ main(int argc, char *argv[]) {
                     for (DepoInfo depo: depos) {
                         TramList trams = depo.stop->getOnlineTrams();
                         cout << "Depo: " << depo.name << endl;
+
                         for (const TramInfo &tramInfo: trams) {
-                            cout << "| " << tramInfo.tram->getStockNumber() << " |" << endl;
+                            try {
+                                cout << "| " << tramInfo.tram->getStockNumber() << " |" << endl;
+                            } catch (Ice::Exception &e) {
+                                cout << "Probably lost connection with this tram |" << endl;
+                            }
                         }
                     }
                     cout << "----------------" << endl;
